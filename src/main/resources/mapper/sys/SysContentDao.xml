@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.sbed.modules.sys.dao.SysContentDao">
+
+	<select id="queryObject" resultType="io.sbed.modules.sys.entity.SysContent">
+		select * from sys_content where id = #{id}
+	</select>
+
+	<select id="queryList" resultType="io.sbed.modules.sys.entity.SysContent">
+		select c.*, GROUP_CONCAT(category.`name` SEPARATOR ',') AS categorys, GROUP_CONCAT(feature.`name` SEPARATOR ',') AS features, GROUP_CONCAT(tag.`name` SEPARATOR ',') AS tags
+		from sys_content c
+		left join sys_content_taxonomy ct on c.`id`=ct.`content_id`
+		left join sys_taxonomy category on ct.`taxonomy_id`=category.`id` and category.`type`=0
+		left join sys_taxonomy feature on ct.`taxonomy_id`=feature.`id` and feature.`type`=1
+		left join sys_taxonomy tag on ct.`taxonomy_id`=tag.`id` and tag.`type`=2
+		<where>
+			<if test="keyword != null and keyword != ''">
+				and (
+				c.`title` like concat('%',#{keyword},'%')
+				or c.`slug` = #{keyword}
+				)
+			</if>
+			<if test="status != null and status != ''">
+				and c.`status` = #{status}
+			</if>
+		</where>
+		group by c.id
+		<choose>
+			<when test="sidx != null and sidx != ''">
+				order by ${sidx} ${order}
+			</when>
+			<otherwise>
+				order by id desc
+			</otherwise>
+		</choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from sys_content
+		<where>
+			<if test="keyword != null and keyword != ''">
+				and (
+				`title` like concat('%',#{keyword},'%')
+				or `slug` = #{slug}
+				)
+			</if>
+			<if test="status != null and status != ''">
+				and `status` = #{status}
+			</if>
+		</where>
+	</select>
+	 
+	<insert id="save" parameterType="io.sbed.modules.sys.entity.SysContent" useGeneratedKeys="true" keyProperty="id">
+		insert into sys_content
+		(
+			`title`, 
+			`text`, 
+			`slug`, 
+			`thumbnail`, 
+			`amount`, 
+			`status`, 
+			`order_num`, 
+			`user_id`, 
+			`object_id`, 
+			`flag`, 
+			`remark`, 
+			`meta_keywords`, 
+			`meta_description`, 
+			`create_time`, 
+			`modify_time`
+		)
+		values
+		(
+			#{title}, 
+			#{text}, 
+			#{slug}, 
+			#{thumbnail}, 
+			#{amount}, 
+			#{status}, 
+			#{orderNum}, 
+			#{userId}, 
+			#{objectId}, 
+			#{flag}, 
+			#{remark}, 
+			#{metaKeywords}, 
+			#{metaDescription}, 
+			#{createTime}, 
+			#{modifyTime}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.sbed.modules.sys.entity.SysContent">
+		update sys_content 
+		<set>
+			<if test="title != null">`title` = #{title}, </if>
+			<if test="text != null">`text` = #{text}, </if>
+			<if test="slug != null">`slug` = #{slug}, </if>
+			<if test="thumbnail != null">`thumbnail` = #{thumbnail}, </if>
+			<if test="amount != null">`amount` = #{amount}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="orderNum != null">`order_num` = #{orderNum}, </if>
+			<if test="objectId != null">`object_id` = #{objectId}, </if>
+			<if test="flag != null">`flag` = #{flag}, </if>
+			<if test="remark != null">`remark` = #{remark}, </if>
+			<if test="metaKeywords != null">`meta_keywords` = #{metaKeywords}, </if>
+			<if test="metaDescription != null">`meta_description` = #{metaDescription}, </if>
+			<if test="modifyTime != null">`modify_time` = #{modifyTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="deleteBatch" parameterType="int">
+		delete from sys_content where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.sbed.modules.sys.dao.SysContentTaxonomyDao">
+
+    <insert id="save">
+        insert into sys_content_taxonomy
+        (
+        `content_id`,
+        `taxonomy_id`
+        )
+        values
+        <foreach collection="taxonomyIdList" item="item" index="index" separator="," >
+            (
+            #{contentId},
+            #{item}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="delete">
+        delete from sys_content_taxonomy where content_id = #{value}
+    </delete>
+
+    <delete id="deleteBatch" parameterType="int">
+        delete from sys_content_taxonomy where content_id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="queryTaxonomyIdList" resultType="long">
+        select ct.taxonomy_id from sys_content_taxonomy ct
+        <if test="types != null">
+            right join sys_taxonomy t on t.id=ct.taxonomy_id and t.type in
+            <foreach item="type" collection="types" open="(" separator="," close=")">
+                #{type}
+            </foreach>
+        </if>
+        where ct.content_id = #{contentId}
+    </select>
+
+    <select id="queryTaxonomyNameList" resultType="String">
+        select t.name from sys_taxonomy t
+        left join sys_content_taxonomy ct on t.id=ct.taxonomy_id
+        where ct.content_id = #{contentId}
+        <if test="types != null">
+            and t.type in
+            <foreach item="type" collection="types" open="(" separator="," close=")">
+                #{type}
+            </foreach>
+        </if>
+    </select>
+
+</mapper>

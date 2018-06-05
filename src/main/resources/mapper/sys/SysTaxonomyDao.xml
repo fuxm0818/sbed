@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.sbed.modules.sys.dao.SysTaxonomyDao">
+
+    <select id="queryObject" resultType="io.sbed.modules.sys.entity.SysTaxonomy">
+        select * from sys_taxonomy where id = #{id}
+    </select>
+
+    <select id="queryObjectBySlug" resultType="io.sbed.modules.sys.entity.SysTaxonomy">
+        select * from sys_taxonomy where slug = #{slug} order by create_time desc limit 1;
+    </select>
+
+    <select id="queryList" resultType="io.sbed.modules.sys.entity.SysTaxonomy">
+        select t.*,p.name as parentName from sys_taxonomy t
+        left join sys_taxonomy p on p.id = t.parent_id
+        <where>
+            <if test="name != null and name != ''">
+                and t.`name` like concat('%',#{name},'%')
+            </if>
+            <if test="type != null">
+                and t.`type` = #{type}
+            </if>
+        </where>
+        <choose>
+            <when test="sidx != null and sidx != ''">
+                order by t.${sidx} ${order}
+            </when>
+            <otherwise>
+                order by t.order_num asc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from sys_taxonomy t
+        <where>
+            <if test="name != null and name != ''">
+                and t.`name` like concat('%',#{name},'%')
+            </if>
+            <if test="type != null">
+                and t.`type` = #{type}
+            </if>
+        </where>
+    </select>
+
+    <delete id="delete">
+        delete from sys_taxonomy where id = #{value}
+    </delete>
+
+    <select id="queryListByType" resultType="io.sbed.modules.sys.entity.SysTaxonomy">
+        select * from sys_taxonomy
+        <where>
+            <if test="type != null">
+                and `type` = #{type}
+            </if>
+        </where>
+        order by order_num asc
+    </select>
+
+    <select id="queryListByParentId" resultType="io.sbed.modules.sys.entity.SysTaxonomy">
+        select * from sys_taxonomy where parent_id = #{parentId} order by order_num asc
+    </select>
+
+    <insert id="save" parameterType="io.sbed.modules.sys.entity.SysTaxonomy" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_taxonomy
+        (
+        `name`,
+        `remark`,
+        `slug`,
+        `type`,
+        `icon`,
+        `order_num`,
+        `parent_id`,
+        `flag`,
+        `meta_keywords`,
+        `meta_description`,
+        `create_time`
+        )
+        values
+        (
+        #{name},
+        #{remark},
+        #{slug},
+        #{type},
+        #{icon},
+        #{orderNum},
+        #{parentId},
+        #{flag},
+        #{metaKeywords},
+        #{metaDescription},
+        #{createTime}
+        )
+    </insert>
+
+    <update id="update" parameterType="io.sbed.modules.sys.entity.SysTaxonomy">
+        update sys_taxonomy
+        <set>
+            <if test="name != null">`name` = #{name}, </if>
+            <if test="remark != null">`remark` = #{remark}, </if>
+            <if test="slug != null">`slug` = #{slug}, </if>
+            <if test="icon != null">`icon` = #{icon}, </if>
+            <if test="orderNum != null">`order_num` = #{orderNum},</if>
+            <if test="parentId != null">`parent_id` = #{parentId}, </if>
+            <if test="flag != null">`flag` = #{flag}, </if>
+            <if test="metaKeywords != null">`meta_keywords` = #{metaKeywords}, </if>
+            <if test="metaDescription != null">`meta_description` = #{metaDescription} </if>
+        </set>
+        where id = #{id}
+    </update>
+
+</mapper>

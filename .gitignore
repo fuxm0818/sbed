@@ -1,0 +1,9 @@
+/WebRoot/
+/target/
+/logs/
+.DS_Store
+.classpath
+.project
+.settings
+*.iml
+.idea
