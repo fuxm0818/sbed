@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @author heguoliang
- * @Description: TODO(系统菜单)
+ * @author
+ * @Description: (系统菜单)
  * @date 2017-6-23 15:07
  */
 @RestController

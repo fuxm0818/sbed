@@ -5,7 +5,6 @@ import io.sbed.common.utils.ShiroUtils;
 import io.sbed.modules.sys.dao.SysContentDao;
 import io.sbed.modules.sys.entity.SysConfig;
 import io.sbed.modules.sys.entity.SysContent;
-import io.sbed.modules.sys.redis.SysContentRedis;
 import io.sbed.modules.sys.service.SysContentService;
 import io.sbed.modules.sys.service.SysContentTaxonomyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +19,6 @@ import java.util.Map;
 public class SysContentServiceImpl implements SysContentService {
 
 	@Autowired
-	private SysContentRedis sysContentRedis;
-
-	@Autowired
 	private SysContentDao sysContentDao;
 
 	@Autowired
@@ -30,11 +26,7 @@ public class SysContentServiceImpl implements SysContentService {
 	
 	@Override
 	public SysContent queryObject(Long id){
-		SysContent content = sysContentRedis.get(id);
-		if(content == null){
-			content = sysContentDao.queryObject(id);
-			sysContentRedis.saveOrUpdate(content);
-		}
+		SysContent content = sysContentDao.queryObject(id);
 		return content;
 	}
 	
@@ -59,13 +51,11 @@ public class SysContentServiceImpl implements SysContentService {
 		//保存内容与分类专题关系
 		sysContentTaxonomyService.saveOrUpdate(content.getId(), content.getTaxonomyIdList(), content.getTagNames());
 
-		sysContentRedis.saveOrUpdate(content);
 	}
 	
 	@Override
 	@Transactional
 	public void update(SysContent content){
-		sysContentRedis.delete(content);
 
 		content.setModifyTime(new Date());
 		sysContentDao.update(content);
@@ -77,11 +67,6 @@ public class SysContentServiceImpl implements SysContentService {
 	@Override
 	@Transactional
 	public void deleteBatch(Long[] ids){
-		for(Long id : ids){
-			SysContent content = queryObject(id);
-			sysContentRedis.delete(content);
-		}
-
 		sysContentDao.deleteBatch(ids);
 
 		//删除内容与分类专题关系

@@ -25,8 +25,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 /**
- * @author heguoliang
- * @Description: TODO(文件处理)
+ * @author
+ * @Description: (文件处理)
  * @date 2017-6-23 15:07
  */
 public class FileUtils {

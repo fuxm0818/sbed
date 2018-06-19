@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
- * @author heguoliang
- * @Description: TODO(异常处理器)
+ * @author
+ * @Description: (异常处理器)
  * @date 2017-6-23 15:07
  */
 @RestControllerAdvice

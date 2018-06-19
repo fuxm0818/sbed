@@ -7,8 +7,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * @author heguoliang
- * @Description: TODO(系统日志注解)
+ * @author
+ * @Description: (系统日志注解)
  * @date 2017-6-23 15:07
  */
 @Target(ElementType.METHOD)

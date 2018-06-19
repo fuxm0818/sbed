@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * @author heguoliang
- * @Description: TODO(分类 专题 标签)
+ * @author
+ * @Description: (分类 专题 标签)
  * @date 2017-8-22 10:07
  */
 public class SysTaxonomy implements Serializable {

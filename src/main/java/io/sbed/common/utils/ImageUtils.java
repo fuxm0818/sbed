@@ -28,8 +28,8 @@ import java.io.InputStream;
 import java.util.Iterator;
 
 /**
- * @author heguoliang
- * @Description: TODO(图片处理)
+ * @author
+ * @Description: (图片处理)
  * @date 2017-6-23 15:07
  */
 public class ImageUtils {

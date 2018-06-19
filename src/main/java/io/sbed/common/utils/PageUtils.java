@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * @author heguoliang
- * @Description: TODO(分页工具类)
+ * @author
+ * @Description: (分页工具类)
  * @date 2017-6-23 15:07
  */
 public class PageUtils implements Serializable {

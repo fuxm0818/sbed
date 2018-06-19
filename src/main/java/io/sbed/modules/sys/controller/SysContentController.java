@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author heguoliang
- * @Description: TODO(内容管理)
+ * @author
+ * @Description: (内容管理)
  * @date 2017-08-29 10:44:09
  */
 @RestController

@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author heguoliang
- * @Description: TODO(还需在XML文件里，有对应的SQL语句)
+ * @author
+ * @Description: (还需在XML文件里，有对应的SQL语句)
  * @date 2017-6-23 15:07
  */
 public interface BaseDao<T> {

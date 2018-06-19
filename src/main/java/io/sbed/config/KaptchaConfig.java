@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Properties;
 
 /**
- * @author heguoliang
- * @Description: TODO(生成验证码配置)
+ * @author
+ * @Description: (生成验证码配置)
  * @date 2017-6-23 15:07
  */
 @Configuration

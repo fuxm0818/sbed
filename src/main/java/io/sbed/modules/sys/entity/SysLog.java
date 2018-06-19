@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * @author heguoliang
- * @Description: TODO(系统日志)
+ * @author
+ * @Description: (系统日志)
  * @date 2017-6-23 15:07
  */
 public class SysLog implements Serializable {

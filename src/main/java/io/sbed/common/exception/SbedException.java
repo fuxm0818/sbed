@@ -1,8 +1,8 @@
 package io.sbed.common.exception;
 
 /**
- * @author heguoliang
- * @Description: TODO(自定义异常)
+ * @author
+ * @Description: (自定义异常)
  * @date 2017-6-23 15:07
  */
 public class SbedException extends RuntimeException {

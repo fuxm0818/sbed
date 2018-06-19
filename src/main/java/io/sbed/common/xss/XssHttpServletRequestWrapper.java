@@ -15,8 +15,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * @author heguoliang
- * @Description: TODO(XSS过滤处理)
+ * @author
+ * @Description: (XSS过滤处理)
  * @date 2017-6-23 15:07
  */
 public class XssHttpServletRequestWrapper extends HttpServletRequestWrapper {

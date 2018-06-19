@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import io.sbed.common.exception.SbedException;
 import io.sbed.modules.sys.dao.SysConfigDao;
 import io.sbed.modules.sys.entity.SysConfig;
-import io.sbed.modules.sys.redis.SysConfigRedis;
 import io.sbed.modules.sys.service.SysConfigService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,20 +19,15 @@ public class SysConfigServiceImpl implements SysConfigService {
 	@Autowired
 	private SysConfigDao sysConfigDao;
 
-	@Autowired
-	private SysConfigRedis sysConfigRedis;
-	
 	@Override
 	@Transactional
 	public void save(SysConfig config) {
 		sysConfigDao.save(config);
-		sysConfigRedis.saveOrUpdate(config);
 	}
 
 	@Override
 	@Transactional
 	public void update(SysConfig config) {
-		sysConfigRedis.delete(config);
 		sysConfigDao.update(config);
 	}
 
@@ -42,7 +36,6 @@ public class SysConfigServiceImpl implements SysConfigService {
 	public void deleteBatch(Long[] ids) {
 		for(Long id : ids){
 			SysConfig config = queryObject(id);
-			sysConfigRedis.delete(config);
 		}
 
 		sysConfigDao.deleteBatch(ids);
@@ -60,22 +53,13 @@ public class SysConfigServiceImpl implements SysConfigService {
 
 	@Override
 	public SysConfig queryObject(Long id) {
-		SysConfig config = sysConfigRedis.get(id);
-		if(config == null){
-			config = sysConfigDao.queryObject(id);
-			sysConfigRedis.saveOrUpdate(config);
-		}
+		SysConfig config = sysConfigDao.queryObject(id);
 		return config;
 	}
 
 	@Override
 	public String getValue(String key) {
-		SysConfig config = sysConfigRedis.get(key);
-		if(config == null){
-			config = sysConfigDao.queryObjectByKey(key);
-			sysConfigRedis.saveOrUpdate(config);
-		}
-
+		SysConfig config = sysConfigDao.queryObjectByKey(key);
 		return config == null ? null : config.getValue();
 	}
 	
@@ -95,11 +79,7 @@ public class SysConfigServiceImpl implements SysConfigService {
 
 	@Override
 	public SysConfig queryObjectByKey(String key) {
-		SysConfig config = sysConfigRedis.get(key);
-		if(config == null){
-			config = sysConfigDao.queryObjectByKey(key);
-			sysConfigRedis.saveOrUpdate(config);
-		}
+		SysConfig config = sysConfigDao.queryObjectByKey(key);
 		return config;
 	}
 

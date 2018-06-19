@@ -5,8 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * @author heguoliang
- * @Description: TODO(日期处理)
+ * @author
+ * @Description: (日期处理)
  * @date 2017-6-23 15:07
  */
 public class DateUtils {

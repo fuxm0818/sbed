@@ -3,8 +3,8 @@ package io.sbed.common.shiro;
 import org.apache.shiro.authc.AuthenticationToken;
 
 /**
- * @author heguoliang
- * @Description: TODO(token)
+ * @author
+ * @Description: (token)
  * @date 2017-6-23 15:07
  */
 public class ShiroToken implements AuthenticationToken {

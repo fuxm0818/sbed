@@ -6,8 +6,8 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @author heguoliang
- * @Description: TODO(内容管理)
+ * @author
+ * @Description: (内容管理)
  * @date 2017-08-29 10:44:09
  */
 public class SysContent implements Serializable {

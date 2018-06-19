@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author heguoliang
- * @Description: TODO(系统参数信息)
+ * @author
+ * @Description: (系统参数信息)
  * @date 2017-6-23 15:07
  */
 @RestController

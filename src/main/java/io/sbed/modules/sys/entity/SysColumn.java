@@ -1,8 +1,8 @@
 package io.sbed.modules.sys.entity;
 
 /**
- * @author heguoliang
- * @Description: TODO(列的属性)
+ * @author
+ * @Description: (列的属性)
  * @date 2017-6-23 15:07
  */
 public class SysColumn {

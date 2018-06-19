@@ -9,8 +9,8 @@ import java.util.Set;
 
 /**
  * 参考文档：http://docs.jboss.org/hibernate/validator/5.4/reference/en-US/html_single/
- * @author heguoliang
- * @Description: TODO(hibernate-validator校验工具类)
+ * @author
+ * @Description: (hibernate-validator校验工具类)
  * @date 2017-6-23 15:07
  */
 public class ValidatorUtils {

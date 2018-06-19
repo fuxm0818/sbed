@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author heguoliang
- * @Description: TODO(动态数据源)
+ * @author
+ * @Description: (动态数据源)
  * @date 2017-6-23 15:07
  */
 public class DynamicDataSource extends AbstractRoutingDataSource {

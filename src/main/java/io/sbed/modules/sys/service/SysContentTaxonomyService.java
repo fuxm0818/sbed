@@ -3,8 +3,8 @@ package io.sbed.modules.sys.service;
 import java.util.List;
 
 /**
- * @author heguoliang
- * @Description: TODO(内容与分类对应关系)
+ * @author
+ * @Description: (内容与分类对应关系)
  * @date 2017-08-30 14:29:48
  */
 public interface SysContentTaxonomyService {

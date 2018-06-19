@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author heguoliang
- * @Description: TODO(部门管理)
+ * @author
+ * @Description: (部门管理)
  * @date 2017-6-23 15:07
  */
 @RestController

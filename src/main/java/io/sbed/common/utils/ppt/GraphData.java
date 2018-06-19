@@ -3,8 +3,8 @@ package io.sbed.common.utils.ppt;
 import java.util.List;
 
 /**
- * @author heguoliang
- * @Description: TODO(图表系列数据)
+ * @author
+ * @Description: (图表系列数据)
  * @date 2017-11-30 11:07
  */
 public class GraphData {

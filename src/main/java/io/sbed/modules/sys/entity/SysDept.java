@@ -6,8 +6,8 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * @author heguoliang
- * @Description: TODO(部门管理)
+ * @author
+ * @Description: (部门管理)
  * @date 2017-6-23 15:07
  */
 public class SysDept implements Serializable {

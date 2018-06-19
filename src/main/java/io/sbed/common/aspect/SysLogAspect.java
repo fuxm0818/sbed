@@ -20,8 +20,8 @@ import java.lang.reflect.Method;
 import java.util.Date;
 
 /**
- * @author heguoliang
- * @Description: TODO(系统日志，切面处理类)
+ * @author
+ * @Description: (系统日志，切面处理类)
  * @date 2017-6-23 15:07
  */
 @Aspect
@@ -81,7 +81,7 @@ public class SysLogAspect {
 		sysLog.setIp(IPUtils.getIpAddr(request));
 
 		//用户名
-		String username = ((SysUser) SecurityUtils.getSubject().getPrincipal()).getUsername();
+		String username = (String) SecurityUtils.getSubject().getPrincipal();
 		sysLog.setUsername(username);
 
 		sysLog.setTime(time);

@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * @author heguoliang
- * @Description: TODO(附件)
+ * @author
+ * @Description: (附件)
  * @date 2017-7-10 16:58
  */
 public class SysAttachment implements Serializable {

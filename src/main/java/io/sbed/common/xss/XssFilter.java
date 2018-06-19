@@ -5,8 +5,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**
- * @author heguoliang
- * @Description: TODO(XSS过滤)
+ * @author
+ * @Description: (XSS过滤)
  * @date 2017-6-23 15:07
  */
 public class XssFilter implements Filter {

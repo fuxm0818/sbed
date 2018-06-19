@@ -29,8 +29,8 @@ import java.security.cert.X509Certificate;
 import java.util.Map;
 
 /**
- * @author heguoliang
- * @Description: TODO(http工具)
+ * @author
+ * @Description: (http工具)
  * @date 2017-6-23 15:07
  */
 public class HttpUtils {

@@ -7,8 +7,8 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @author heguoliang
- * @Description: TODO(角色)
+ * @author
+ * @Description: (角色)
  * @date 2017-6-23 15:07
  */
 public class SysRole implements Serializable {

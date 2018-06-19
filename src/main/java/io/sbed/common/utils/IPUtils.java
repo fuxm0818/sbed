@@ -7,8 +7,8 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * @author heguoliang
- * @Description: TODO(IP地址处理工具类)
+ * @author
+ * @Description: (IP地址处理工具类)
  * @date 2017-6-23 15:07
  */
 public class IPUtils {

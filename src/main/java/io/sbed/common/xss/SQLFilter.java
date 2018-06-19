@@ -4,8 +4,8 @@ import io.sbed.common.exception.SbedException;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * @author heguoliang
- * @Description: TODO(SQL过滤)
+ * @author
+ * @Description: (SQL过滤)
  * @date 2017-6-23 15:07
  */
 public class SQLFilter {

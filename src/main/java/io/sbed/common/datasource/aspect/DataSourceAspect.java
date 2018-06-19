@@ -16,8 +16,8 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Method;
 
 /**
- * @author heguoliang
- * @Description: TODO(多数据源切面处理类-注解切换数据源)
+ * @author
+ * @Description: (多数据源切面处理类-注解切换数据源)
  * @date 2017-9-26 16:55
  */
 @Aspect

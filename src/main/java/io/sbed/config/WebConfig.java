@@ -2,7 +2,6 @@ package io.sbed.config;
 
 import io.sbed.common.utils.FileUtils;
 import io.sbed.common.xss.XssFilter;
-import io.sbed.modules.api.intercept.ApiInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -16,15 +15,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import javax.servlet.DispatcherType;
 
 /**
- * @author heguoliang
- * @Description: TODO(web配置)
+ * @author
+ * @Description: (web配置)
  * @date 2017-6-23 15:07
  */
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
-
-    @Autowired
-    private ApiInterceptor apiInterceptor;
 
     @Value("${sys.swagger.open:#{false}}")
     private boolean swaggerOpen;
@@ -65,10 +61,10 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         return registration;
     }
 
-    //添加api interceptor
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(apiInterceptor).addPathPatterns("/api/**");
-    }
+//    //添加api interceptor
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//        registry.addInterceptor(apiInterceptor).addPathPatterns("/api/**");
+//    }
 
 }

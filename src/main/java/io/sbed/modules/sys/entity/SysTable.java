@@ -3,8 +3,8 @@ package io.sbed.modules.sys.entity;
 import java.util.List;
 
 /**
- * @author heguoliang
- * @Description: TODO(表数据)
+ * @author
+ * @Description: (表数据)
  * @date 2017-6-23 15:07
  */
 public class SysTable {

@@ -1,8 +1,8 @@
 package io.sbed.modules.sys.entity;
 
 /**
- * @author heguoliang
- * @Description: TODO(系统配置信息)
+ * @author
+ * @Description: (系统配置信息)
  * @date 2017-6-23 15:07
  */
 public class SysConfig {

@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author heguoliang
- * @Description: TODO(系统用户)
+ * @author
+ * @Description: (系统用户)
  * @date 2017-6-23 15:07
  */
 @RestController
@@ -57,7 +57,7 @@ public class SysUserController extends AbstractController {
 	 */
 	@RequestMapping("/info")
 	public Result info(){
-		return Result.ok().put("user", getUser());
+		return Result.ok().put("user", getUser(sysUserService));
 	}
 	
 	/**
@@ -71,12 +71,12 @@ public class SysUserController extends AbstractController {
 		}
 		
 		//sha256加密
-		password = new Sha256Hash(password, getUser().getSalt()).toHex();
+		password = new Sha256Hash(password, getUser(sysUserService).getPassword()).toHex();
 		//sha256加密
-		newPassword = new Sha256Hash(newPassword, getUser().getSalt()).toHex();
+		newPassword = new Sha256Hash(newPassword, getUser(sysUserService).getPassword()).toHex();
 
 		//更新密码
-		int count = sysUserService.updatePassword(getUser(), password, newPassword);
+		int count = sysUserService.updatePassword(getUser(sysUserService), password, newPassword);
 		if(count == 0){
 			return Result.error("原密码不正确");
 		}

@@ -5,7 +5,6 @@ import io.sbed.modules.sys.dao.SysMenuDao;
 import io.sbed.modules.sys.dao.SysUserDao;
 import io.sbed.modules.sys.entity.SysMenu;
 import io.sbed.modules.sys.entity.SysUser;
-import io.sbed.modules.sys.redis.SysUserRedis;
 import io.sbed.modules.sys.service.SysRoleService;
 import io.sbed.modules.sys.service.SysUserRoleService;
 import io.sbed.modules.sys.service.SysUserService;
@@ -33,9 +32,6 @@ public class SysUserServiceImpl implements SysUserService {
 	@Autowired
 	private SysMenuDao sysMenuDao;
 
-	@Autowired
-	private SysUserRedis sysUserRedis;
-
 	@Override
 	public List<String> queryAllPerms(Long userId) {
 		return sysUserDao.queryAllPerms(userId);
@@ -48,21 +44,13 @@ public class SysUserServiceImpl implements SysUserService {
 
 	@Override
 	public SysUser queryByUserName(String username) {
-		SysUser sysUser=sysUserRedis.get(username);
-		if(sysUser==null){
-			sysUser=sysUserDao.queryByUserName(username);
-			sysUserRedis.saveOrUpdate(sysUser);
-		}
+		SysUser sysUser=sysUserDao.queryByUserName(username);
 		return sysUser;
 	}
 
 	@Override
 	public SysUser queryObject(Long id) {
-		SysUser sysUser=sysUserRedis.get(id);
-		if(sysUser==null){
-			sysUser=sysUserDao.queryObject(id);
-			sysUserRedis.saveOrUpdate(sysUser);
-		}
+		SysUser sysUser=sysUserDao.queryObject(id);
 		return sysUser;
 	}
 
@@ -81,26 +69,22 @@ public class SysUserServiceImpl implements SysUserService {
 	public void save(SysUser user) {
 		user.setCreateTime(new Date());
 		//sha256加密
-		String salt = RandomStringUtils.randomAlphanumeric(20);
-		user.setPassword(new Sha256Hash(user.getPassword(), salt).toHex());
-		user.setSalt(salt);
+		user.setPassword(new Sha256Hash(user.getPassword(), user.getPassword()).toHex());
 		sysUserDao.save(user);
 
 		//保存用户与角色关系
 		sysUserRoleService.saveOrUpdate(user.getId(), user.getRoleIdList());
 
-		sysUserRedis.saveOrUpdate(user);
 	}
 
 	@Override
 	@Transactional
 	public void update(SysUser user) {
-		sysUserRedis.delete(user);
 
 		if(StringUtils.isBlank(user.getPassword())){
 			user.setPassword(null);
 		}else{
-			user.setPassword(new Sha256Hash(user.getPassword(), user.getSalt()).toHex());
+			user.setPassword(new Sha256Hash(user.getPassword(), user.getPassword()).toHex());
 		}
 		sysUserDao.update(user);
 		
@@ -111,11 +95,6 @@ public class SysUserServiceImpl implements SysUserService {
 	@Override
 	@Transactional
 	public void deleteBatch(Long[] ids) {
-		for(Long id : ids){
-			SysUser sysUser=queryObject(id);
-			sysUserRedis.delete(sysUser);
-		}
-
 		sysUserDao.deleteBatch(ids);
 
 		//删除用户与角色关系
@@ -125,7 +104,6 @@ public class SysUserServiceImpl implements SysUserService {
 	@Override
 	@Transactional
 	public int updatePassword(SysUser user, String password, String newPassword) {
-		sysUserRedis.delete(user);
 
 		Map<String, Object> map = new HashMap<>();
 		map.put("id", user.getId());

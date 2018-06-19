@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author heguoliang
- * @Description: TODO(分类 专题 标签)
+ * @author
+ * @Description: (分类 专题 标签)
  * @date 2017-8-22 13:45
  */
 @RestController

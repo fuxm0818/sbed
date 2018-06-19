@@ -6,8 +6,8 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * @author heguoliang
- * @Description: TODO(菜单管理)
+ * @author
+ * @Description: (菜单管理)
  * @date 2017-6-23 15:07
  */
 public class SysMenu implements Serializable {

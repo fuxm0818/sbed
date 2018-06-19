@@ -123,11 +123,19 @@
 			<artifactId>shiro-spring</artifactId>
 			<version>${shiro.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.shiro</groupId>
-			<artifactId>shiro-ehcache</artifactId>
-			<version>${shiro.version}</version>
-		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>org.apache.shiro</groupId>-->
+			<!--<artifactId>shiro-ehcache</artifactId>-->
+			<!--<version>${shiro.version}</version>-->
+		<!--</dependency>-->
+
+		<!--<dependency>-->
+			<!--<groupId>javax.cache</groupId>-->
+			<!--<artifactId>cache-api</artifactId>-->
+			<!--<version>1.0.0</version>-->
+		<!--</dependency>-->
+
+
 		<dependency>
 			<groupId>org.ehcache</groupId>
 			<artifactId>ehcache</artifactId>
@@ -177,10 +185,15 @@
 			<version>${pinyin4j.version}</version>
 		</dependency>
 		<!--jwt-->
+		<!--<dependency>-->
+			<!--<groupId>io.jsonwebtoken</groupId>-->
+			<!--<artifactId>jjwt</artifactId>-->
+			<!--<version>${jwt.version}</version>-->
+		<!--</dependency>-->
 		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt</artifactId>
-			<version>${jwt.version}</version>
+			<groupId>com.auth0</groupId>
+			<artifactId>java-jwt</artifactId>
+			<version>3.3.0</version>
 		</dependency>
 		<!--swagger-->
 		<dependency>
@@ -227,6 +240,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
+					<jvmArguments>-Xmx64m -XX:MaxDirectMemorySize=512m</jvmArguments>
 					<fork>true</fork>
 				</configuration>
 			</plugin>

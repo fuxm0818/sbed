@@ -1,16 +1,16 @@
 package io.sbed.common;
 
 /**
- * @author heguoliang
- * @Description: TODO(常量)
+ * @author
+ * @Description: (常量)
  * @date 2017-6-23 15:07
  */
 public class Constant {
 
     /**
-     * 登录错误次数
+     * 令牌
      */
-    public  static final String LOGIN_ERROR_TIMES= "login_error_times";
+    public  static final String TOKEN_IN_HEADER = "token";
 
     /**
      * 超级管理员ID

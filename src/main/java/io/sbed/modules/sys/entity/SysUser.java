@@ -9,8 +9,8 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @author heguoliang
- * @Description: TODO(系统用户)
+ * @author
+ * @Description: (系统用户)
  * @date 2017-6-23 15:07
  */
 public class SysUser implements Serializable {
@@ -36,11 +36,6 @@ public class SysUser implements Serializable {
 	 */
 	@NotBlank(message="密码不能为空", groups = AddGroup.class)
 	private String password;
-
-	/**
-	 * 盐
-	 */
-	private String salt;
 
 	/**
 	 * 邮箱
@@ -211,14 +206,6 @@ public class SysUser implements Serializable {
 
 	public void setRoleIdList(List<Long> roleIdList) {
 		this.roleIdList = roleIdList;
-	}
-
-	public String getSalt() {
-		return salt;
-	}
-
-	public void setSalt(String salt) {
-		this.salt = salt;
 	}
 
 	public Long getDeptId() {

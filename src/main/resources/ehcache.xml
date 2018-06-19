@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="http://www.ehcache.org/v3"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core.xsd">
+    <!-- 缓存模板 -->
+    <cache-template name="cacheTemplate">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.lang.String</value-type>
+        <heap unit="entries">200</heap>
+    </cache-template>
+
+    <!-- 无到期时间的缓存 -->
+    <cache alias="noExpiryCache" uses-template="cacheTemplate">
+        <expiry>
+            <!-- 永久有效 -->
+            <none/>
+        </expiry>
+    </cache>
+
+    <!-- 有到期时间的缓存 -->
+    <cache alias="expiryCache" uses-template="cacheTemplate">
+        <expiry>
+            <!-- 10分钟后无访问将过期 -->
+            <tti unit="minutes">10</tti>
+        </expiry>
+    </cache>
+</config>

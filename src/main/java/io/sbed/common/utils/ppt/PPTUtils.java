@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author heguoliang
- * @Description: TODO(PPT公具类)
+ * @author
+ * @Description: (PPT公具类)
  * @date 2017-11-30 11:09
  */
 public class PPTUtils {

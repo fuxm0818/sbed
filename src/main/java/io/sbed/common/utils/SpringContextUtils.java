@@ -6,8 +6,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 /**
- * @author heguoliang
- * @Description: TODO(Spring Context 工具类)
+ * @author
+ * @Description: (Spring Context 工具类)
  * @date 2017-6-23 15:07
  */
 @Component

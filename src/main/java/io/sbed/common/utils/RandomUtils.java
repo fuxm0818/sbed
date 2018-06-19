@@ -11,8 +11,8 @@ import java.util.Random;
 import java.util.UUID;
 
 /**  
-* @Description: TODO(随机数工具类)
-* @author heguoliang  
+* @Description: (随机数工具类)
+* @author
 * @date 2016年10月10日 上午8:50:13
 */
 public class RandomUtils {

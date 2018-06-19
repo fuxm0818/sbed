@@ -11,8 +11,8 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
- * @author heguoliang
- * @Description: TODO(Swagger2配置)
+ * @author
+ * @Description: (Swagger2配置)
  * @date 2017-10-31 16:17
  */
 @Configuration
@@ -32,8 +32,8 @@ public class Swagger2Config {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("sbed的前端api文档")
-                .description("更多资讯请点击 http://heguoliang.top")
-                .termsOfServiceUrl("http://heguoliang.top")
+                .description("更多资讯请点击 http://.top")
+                .termsOfServiceUrl("http://.top")
                 .contact("靓仔梁")
                 .version("1.0")
                 .build();

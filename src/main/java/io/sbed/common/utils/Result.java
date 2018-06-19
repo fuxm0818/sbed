@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author heguoliang
- * @Description: TODO(返回数据)
+ * @author
+ * @Description: (返回数据)
  * @date 2017-6-23 15:07
  */
 public class Result extends HashMap<String, Object> {

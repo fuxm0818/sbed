@@ -4,17 +4,20 @@ import io.sbed.modules.sys.entity.SysUser;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.stereotype.Component;
 
 /**
- * @author heguoliang
- * @Description: TODO(Shiro工具类)
+ * @author
+ * @Description: (Shiro工具类)
  * @date 2017-6-23 15:07
  */
+@Component
 public class ShiroUtils {
 
-	public static Session getSession() {
-		return SecurityUtils.getSubject().getSession();
-	}
+//	public static Session getSession() {
+//		return SecurityUtils.getSubject().getSession();
+//	}
 
 	public static Subject getSubject() {
 		return SecurityUtils.getSubject();
@@ -28,13 +31,13 @@ public class ShiroUtils {
 		return getUserEntity().getId();
 	}
 	
-	public static void setSessionAttribute(Object key, Object value) {
-		getSession().setAttribute(key, value);
-	}
+//	public static void setSessionAttribute(Object key, Object value) {
+//		getSession().setAttribute(key, value);
+//	}
 
-	public static Object getSessionAttribute(Object key) {
-		return getSession().getAttribute(key);
-	}
+//	public static Object getSessionAttribute(Object key) {
+//		return getSession().getAttribute(key);
+//	}
 
 	public static boolean isLogin() {
 		return SecurityUtils.getSubject().getPrincipal() != null;
