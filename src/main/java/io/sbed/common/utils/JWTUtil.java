@@ -57,6 +57,20 @@ public class JWTUtil {
     }
 
     /**
+     * 获取最近的活动时间
+     * @param token
+     * @return
+     */
+    public static String getActiveTime(String token) {
+        try {
+            DecodedJWT jwt = JWT.decode(token);
+            return jwt.getClaim("activeTime").asString();
+        } catch (JWTDecodeException e) {
+            return null;
+        }
+    }
+
+    /**
      * 生成签名,5min后过期
      *
      * @param username 用户名
@@ -70,6 +84,7 @@ public class JWTUtil {
             // 附带username信息
             return JWT.create()
                     .withClaim("username", username)
+                    .withClaim("activeTime",System.currentTimeMillis())
                     .withExpiresAt(date)
                     .sign(algorithm);
         } catch (UnsupportedEncodingException e) {

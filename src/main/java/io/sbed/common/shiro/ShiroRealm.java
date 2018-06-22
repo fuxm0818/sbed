@@ -67,6 +67,12 @@ public class ShiroRealm extends AuthorizingRealm {
             throw new AuthenticationException("token invalid");
         }
 
+//        //token超时
+//        String activeTime = JWTUtil.getActiveTime(token);
+//        if(StringUtils.isBlank(activeTime) || System.currentTimeMillis() > NumberUtils.toLong(activeTime,0)+ 1000 * 60 * 30){
+//            throw new IncorrectCredentialsException("token失效，请重新登录");
+//        }
+
         //通过username从数据库中查找 ManagerInfo对象
         //实际项目中，这里可以根据实际情况做缓存，如果不做，Shiro自己也是有时间间隔机制，2分钟内不会重复执行该方法
         SysUser user = sysUserService.queryObject(NumberUtils.toLong(username));
@@ -80,11 +86,13 @@ public class ShiroRealm extends AuthorizingRealm {
         }
 
         //账号锁定
-        if(Constant.UserStatus.DISABLE.getValue()==user.getStatus()){
+        if (Constant.UserStatus.DISABLE.getValue() == user.getStatus()) {
             throw new LockedAccountException("账号已被锁定,请联系管理员");
         }
 
-        return new SimpleAuthenticationInfo(token, token, getName());
+        SysUser sysUser = sysUserService.queryObject(NumberUtils.toLong(username,-1));
+
+        return new SimpleAuthenticationInfo(sysUser, token, getName());
 
 
 
