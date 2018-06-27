@@ -143,6 +143,7 @@ public class Constant {
         public static final String SYSUSER_USERNAME = "SYSUSER-USERNAME-";
         public static final String CAPTCHA_TEXT = "captcha-text-";
         public static final String CAPTCHA_ERROR_TIMES = "captcha-errorTimes-";
+        public static final String SHIRO_CACHE_KEY = "shiro:";
     }
 
 }

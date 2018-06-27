@@ -1,6 +1,7 @@
 package io.sbed.common.shiro;
 
 
+import io.sbed.common.Constant;
 import io.sbed.modules.sys.entity.SysUser;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
@@ -17,14 +18,12 @@ import java.util.Set;
 @Component
 public class ShiroRedisCacheManager implements CacheManager {
 
-    private static final String cacheKeyPrefix = "shiro:";
-
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
     @Override
     public <K, V> Cache<K, V> getCache(String name) throws CacheException {
-        return new ShiroRedisCache<K,V>(cacheKeyPrefix+name);
+        return new ShiroRedisCache<K,V>(Constant.prefix.SHIRO_CACHE_KEY +name);
     }
 
     /**
