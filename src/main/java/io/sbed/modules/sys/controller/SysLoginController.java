@@ -128,6 +128,55 @@ public class SysLoginController extends AbstractController {
         return r;
     }
 
+
+
+//    @RequestMapping(value = "/sys/login", method = RequestMethod.POST)
+//    public Result login(HttpServletResponse response,String username, String password, String captcha, String captchaT) throws IOException {
+//        Object _login_errors = 3;
+//        //redis中获取登录错误次数
+//        _login_errors = NumberUtils.toInt(RedisUtils.get(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT), 0);
+//        if (_login_errors == null) {
+//            _login_errors = 3;
+//        }
+//        long errorTimes = Long.valueOf(_login_errors.toString());
+//
+//        //验证码
+//        if (errorTimes >= 3) {
+//            String kaptcha = getKaptcha(captchaT);
+//            if (!captcha.equalsIgnoreCase(kaptcha)) {
+//                // redis中获取登录错误次数
+//                RedisUtils.set(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT, ++errorTimes, Constant.Time.Second.MINUTE_5);
+//                return Result.error("验证码错误").put("errorTimes", errorTimes);
+//            }
+//        }
+//        RedisUtils.delete(Constant.prefix.CAPTCHA_TEXT + captchaT);
+//
+//        Subject subject = SecurityUtils.getSubject();
+//
+//        AuthenticationToken token = new UsernamePasswordToken(username, password);
+//
+//        Map<String, Object> result = new HashMap<>();
+//        try {
+//            // 登录，即身份验证
+//            subject.login(token);
+//            SysUserActive sysUserActive = (SysUserActive)subject.getPrincipal();
+//            result.put(Constant.TOKEN_IN_HEADER, sysUserActive.getToken());
+//
+//        } catch (IncorrectCredentialsException e) {
+//            RedisUtils.set(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT, ++errorTimes, Constant.Time.Second.MINUTE_5);
+//            return Result.error("用户名或密码错误").put("errorTimes", errorTimes);
+//        } catch (UnauthenticatedException e) {
+//            RedisUtils.set(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT, ++errorTimes, Constant.Time.Second.MINUTE_5);
+//            return Result.error("用户名或密码错误").put("errorTimes", errorTimes);
+//        } catch (LockedAccountException e) {
+//            RedisUtils.set(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT, ++errorTimes, Constant.Time.Second.MINUTE_5);
+//            return Result.error("登录失败，该用户已被冻结").put("errorTimes", errorTimes);
+//        }
+//
+//        Result r = Result.ok().put(result);
+//        return r;
+//    }
+
     /**
      * 从session中获取记录的验证码
      */

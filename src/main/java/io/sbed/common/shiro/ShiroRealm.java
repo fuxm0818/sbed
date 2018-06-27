@@ -68,6 +68,40 @@ public class ShiroRealm extends AuthorizingRealm {
             throw new LockedAccountException("账号已被锁定,请联系管理员");
         }
 
+
+
+        /*
+        UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken)auth;
+
+        //用户信息
+        SysUser user = sysUserService.queryByUserName(usernamePasswordToken.getUsername());
+
+        //账号不存在
+        if (user == null) {
+            throw new IncorrectCredentialsException();
+        }
+
+        //密码错误,使用密码当做加密的盐
+        if (!user.getPassword().equals(new Sha256Hash(usernamePasswordToken.getPassword(), user.getSalt()).toHex())) {
+            throw new IncorrectCredentialsException();
+        }
+
+        //账号锁定
+        if (Constant.UserStatus.DISABLE.getValue() == user.getStatus()) {
+            throw new LockedAccountException();
+        }
+
+        //生成token
+        String token = JWTUtil.sign(user.getUsername() + "", user.getPassword() + "");
+
+        //保存到数据库redis
+        SysUserActive sysUserActive = new SysUserActive();
+        sysUserActive.setToken(token);
+        sysUserActive.setLastActiveTime(System.currentTimeMillis());
+        RedisUtils.set(Constant.prefix.SYSUSER_USERNAME + user.getUsername(), sysUserActive);
+
+         */
+
         //用户登录后,清除用户缓存,以便重新加载用户权限
         clearAuthorizationInfoCache(user);
 
