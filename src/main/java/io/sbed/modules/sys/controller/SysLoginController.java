@@ -86,14 +86,14 @@ public class SysLoginController extends AbstractController {
         if (user == null) {
             //redis中获取登录错误次数
             RedisUtils.set(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT, ++errorTimes, Constant.Time.Second.MINUTE_5);
-            return Result.error("账号不存在").put("errorTimes", errorTimes);
+            return Result.error("用户名或密码错误").put("errorTimes", errorTimes);
         }
 
         //密码错误,使用密码当做加密的盐
         if (!user.getPassword().equals(new Sha256Hash(password, user.getSalt()).toHex())) {
             //redis中获取登录错误次数
             RedisUtils.set(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT, ++errorTimes, Constant.Time.Second.MINUTE_5);
-            return Result.error("密码不正确").put("errorTimes", errorTimes);
+            return Result.error("用户名或密码错误").put("errorTimes", errorTimes);
         }
 
         //验证码
@@ -102,7 +102,7 @@ public class SysLoginController extends AbstractController {
             if (!captcha.equalsIgnoreCase(kaptcha)) {
                 // redis中获取登录错误次数
                 RedisUtils.set(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT, ++errorTimes, Constant.Time.Second.MINUTE_5);
-                return Result.error("验证码不正确").put("errorTimes", errorTimes);
+                return Result.error("验证码错误").put("errorTimes", errorTimes);
             }
         }
 

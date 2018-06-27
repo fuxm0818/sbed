@@ -1,9 +1,9 @@
 package io.sbed.common.cache;
 
 import com.google.gson.Gson;
+import io.sbed.common.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Component;
 
@@ -35,9 +35,6 @@ public class RedisUtils {
 //    @Autowired
     private static ZSetOperations<String, Object> zSetOperations;
 
-    /**  默认过期时长，单位：秒 */
-    public final static long DEFAULT_EXPIRE = 60 * 60 * 24;
-
     /**  不设置过期时长 */
     public final static long NOT_EXPIRE = -1;
 
@@ -67,7 +64,7 @@ public class RedisUtils {
 //            return;
 //        }
 
-        set(key, value, DEFAULT_EXPIRE);
+        set(key, value, Constant.Time.Second.day_1);
     }
 
     public static <T> T get(String key, Class<T> clazz, long expire) {

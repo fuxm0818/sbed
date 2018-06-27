@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class ShiroRedisCacheManager implements CacheManager {
@@ -49,6 +50,7 @@ public class ShiroRedisCacheManager implements CacheManager {
             BoundHashOperations<String,K,V> hash = redisTemplate.boundHashOps(cacheKey);
             Object k=hashKey(key);
             hash.put((K)k, value);
+            hash.expire(Constant.Time.Second.day_1,TimeUnit.SECONDS);
             return value;
         }
 
