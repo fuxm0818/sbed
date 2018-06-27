@@ -38,6 +38,11 @@ public class SysUser implements Serializable {
 	private String password;
 
 	/**
+	 * 盐
+	 */
+	private String salt;
+
+	/**
 	 * 邮箱
 	 */
 	//@NotBlank(message="邮箱不能为空", groups = {AddGroup.class, UpdateGroup.class})
@@ -206,6 +211,14 @@ public class SysUser implements Serializable {
 
 	public void setRoleIdList(List<Long> roleIdList) {
 		this.roleIdList = roleIdList;
+	}
+
+	public String getSalt() {
+		return salt;
+	}
+
+	public void setSalt(String salt) {
+		this.salt = salt;
 	}
 
 	public Long getDeptId() {

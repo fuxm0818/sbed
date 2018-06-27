@@ -131,6 +131,7 @@
             }
         },
         created: function () {
+            this.src = baseURL + 'captcha.jpg?captchaT=' + this.captchaT,
             this.getLoginErrorTimes();
         }
     });

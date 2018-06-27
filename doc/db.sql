@@ -19,6 +19,7 @@ CREATE TABLE `sys_user` (
   `username` varchar(128) NOT NULL COMMENT '用户名',
   `nickname` varchar(128) COMMENT '别名',
   `password` varchar(128) COMMENT '密码',
+  `salt` varchar(32) COMMENT '盐',
   `email` varchar(64) COMMENT '邮箱',
   `mobile` varchar(32) COMMENT '手机号码',
   `status` tinyint COMMENT '状态  0：禁用   1：正常',
@@ -180,7 +181,7 @@ CREATE TABLE `sys_content_taxonomy` (
   KEY `content_id` (`content_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='内容与分类对应关系';
 
-insert into `sys_user` (`id`, `username`, `nickname`, `password`, `email`, `mobile`, `status`, `dept_id`, `create_time`) values ('1', 'admin', NULL, '9ec9750e709431dad22365cabc5c625482e574c74adaebba7dd02f1129e4ce1d', NULL, NUll, '1', NULL, '2016-11-11 11:11:11');
+insert into `sys_user` (`id`, `username`, `nickname`, `password`, `salt`, `email`, `mobile`, `status`, `dept_id`, `create_time`) values ('1', 'admin', NULL, '9ec9750e709431dad22365cabc5c625482e574c74adaebba7dd02f1129e4ce1d', 'YzcmCZNvbXocrsz9dm8e', NULL, NUll, '1', NULL, '2016-11-11 11:11:11');
 insert into `sys_menu` (`id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) values('1','0','系统管理',NULL,NULL,'0','fa fa-cogs','0');
 insert into `sys_menu` (`id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) values('2','1','用户管理','modules/sys/user.html',NULL,'1','fa fa-user','1');
 insert into `sys_menu` (`id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) values('3','2','查看',NULL,'sys:user:list,sys:user:info','2',NULL,'0');

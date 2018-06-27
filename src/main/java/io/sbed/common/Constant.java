@@ -130,4 +130,19 @@ public class Constant {
         }
     }
 
+    public class Time{
+        public class Second{
+            public static final int MINUTE_5 = 60 * 5;
+        }
+        public class Millisecond{
+            public static final long MINUTE_30 = 1000 * 60 * 3;
+        }
+    }
+
+    public class prefix{
+        public static final String SYSUSER_USERNAME = "SYSUSER-USERNAME-";
+        public static final String CAPTCHA_TEXT = "captcha-text-";
+        public static final String CAPTCHA_ERROR_TIMES = "captcha-errorTimes-";
+    }
+
 }

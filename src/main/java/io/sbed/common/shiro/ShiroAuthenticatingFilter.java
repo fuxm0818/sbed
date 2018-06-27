@@ -6,12 +6,15 @@ import io.sbed.common.cache.RedisUtils;
 import io.sbed.common.utils.JWTUtil;
 import io.sbed.common.utils.ResponseUtil;
 import io.sbed.common.utils.Result;
+import io.sbed.modules.sys.entity.SysUserActive;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpStatus;
+import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.ServletRequest;
@@ -29,34 +32,33 @@ import java.io.IOException;
  */
 public class ShiroAuthenticatingFilter extends BasicHttpAuthenticationFilter {
 
-    private Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+    private static final Log log = LogFactory.getLog(ShiroAuthenticatingFilter.class);
 
     /**
      * 获取请求的token
      */
-    private String getRequestToken(HttpServletRequest httpRequest){
+    private String getRequestToken(HttpServletRequest httpRequest) {
         //从header中获取token
         String token = httpRequest.getHeader(Constant.TOKEN_IN_HEADER);
-
         //如果header中不存在token，则从参数中获取token
-        if(StringUtils.isBlank(token)){
+        if (StringUtils.isBlank(token)) {
             token = httpRequest.getParameter(Constant.TOKEN_IN_HEADER);
         }
-
         return token;
     }
 
     //创建shiro认证的token
     @Override
     protected AuthenticationToken createToken(ServletRequest request, ServletResponse response) {
-        //获取请求token
         String token = getRequestToken((HttpServletRequest) request);
-
-        if(StringUtils.isBlank(token)){
+        if (StringUtils.isNotBlank(token)) {
+            if (log.isDebugEnabled()) {
+                log.debug("Attempting to execute login with headers [" + token + "]");
+            }
+            return new ShiroToken(token);
+        } else {
             return null;
         }
-
-        return new ShiroToken(token);
     }
 
     /**
@@ -65,49 +67,65 @@ public class ShiroAuthenticatingFilter extends BasicHttpAuthenticationFilter {
      */
     @Override
     protected boolean isLoginAttempt(ServletRequest request, ServletResponse response) {
-        HttpServletRequest req = (HttpServletRequest) request;
-        String authorization = req.getHeader(Constant.TOKEN_IN_HEADER);
-        return authorization != null;
+        return StringUtils.isNotBlank(this.getRequestToken((HttpServletRequest) request));
     }
 
     //拒绝访问的出来
     @Override
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
-        //获取请求token，如果token不存在，直接返回401
-        HttpServletRequest req = (HttpServletRequest) request;
-        String token = req.getHeader(Constant.TOKEN_IN_HEADER);
-        if(StringUtils.isBlank(token)){
-            return unauthorized(response);
-        }else{
-            String tokenInRedis = RedisUtils.get(Constant.TOKEN_IN_HEADER+"-"+JWTUtil.getUsername(token));
-            if(StringUtils.isBlank(tokenInRedis) || !token.equals(tokenInRedis)){
-                return unauthorized(response);
+        String token = this.getRequestToken((HttpServletRequest) request);
+        SysUserActive sysUserActive = null;
+
+        //token失效
+        if (StringUtils.isBlank(token)) {
+            return unauthorized((HttpServletResponse) response,"token失效，请重新登录");
+        } else {
+            // 解密获得username，用于和数据库进行对比
+            String usernameInToken = JWTUtil.getUsername(token);
+            if (StringUtils.isBlank(usernameInToken)) {
+                return unauthorized((HttpServletResponse) response,"token失效，请重新登录");
+            }
+
+            sysUserActive = RedisUtils.get(Constant.prefix.SYSUSER_USERNAME + usernameInToken, SysUserActive.class);
+            if (null == sysUserActive || StringUtils.isBlank(sysUserActive.getToken()) || !token.equalsIgnoreCase(sysUserActive.getToken())) {
+                return unauthorized((HttpServletResponse) response,"token失效，请重新登录");
+            }
+
+            //token超时
+            if (System.currentTimeMillis() > sysUserActive.getLastActiveTime() + Constant.Time.Millisecond.MINUTE_30) {
+                RedisUtils.delete(Constant.prefix.SYSUSER_USERNAME + usernameInToken);
+                return unauthorized((HttpServletResponse) response,"token超时失效，请重新登录");
             }
         }
 
-        return executeLogin(request, response);
+        return this.executeLogin(request, response);
     }
 
-    private boolean unauthorized(ServletResponse response) throws Exception{
+    @Override
+    protected boolean executeLogin(ServletRequest request, ServletResponse response) throws Exception {
+        AuthenticationToken token = this.createToken(request, response);
+        if (token == null) {
+            String msg = "createToken method implementation returned null. A valid non-null AuthenticationToken must be created in order to execute a login attempt.";
+            return unauthorized((HttpServletResponse) response,"token缺失");
+        } else {
+            try {
+                Subject subject = this.getSubject(request, response);
+                subject.login(token);
+                return this.onLoginSuccess(token, subject, request, response);
+            } catch (AuthenticationException e) {
+                log.error("登录异常-->ShiroAuthenticatingFilter.executeLogin()",e);
+                return unauthorized((HttpServletResponse) response,"登录异常");
+            }
+        }
+    }
+
+    private boolean unauthorized(ServletResponse response,String errorMsg) throws IOException {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
-        String json = new Gson().toJson(Result.error(HttpStatus.SC_UNAUTHORIZED, "token失效"));
+        String json = new Gson().toJson(Result.error(HttpStatus.SC_UNAUTHORIZED, errorMsg));
         ResponseUtil.write((HttpServletResponse) response, json);
         return false;
     }
 
-    /**
-     *
-     */
-    @Override
-    protected boolean executeLogin(ServletRequest request, ServletResponse response) throws Exception {
-        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        String authorization = httpServletRequest.getHeader(Constant.TOKEN_IN_HEADER);
-        ShiroToken token = new ShiroToken(authorization);
-        // 提交给realm进行登入，如果错误他会抛出异常并被捕获
-        getSubject(request, response).login(token);
-        // 如果没有抛出异常则代表登入成功，返回true
-        return true;
-    }
 
     /**
      * 这里我们详细说明下为什么最终返回的都是true，即允许访问
@@ -120,14 +138,6 @@ public class ShiroAuthenticatingFilter extends BasicHttpAuthenticationFilter {
      */
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-//        if (isLoginAttempt(request, response)) {
-//            try {
-//                executeLogin(request, response);
-//            } catch (Exception e) {
-//                response401(request, response);
-//            }
-//        }
-//        return true;
         return false;
     }
 
@@ -149,15 +159,4 @@ public class ShiroAuthenticatingFilter extends BasicHttpAuthenticationFilter {
         return super.preHandle(request, response);
     }
 
-    /**
-     * 将非法请求跳转到 /401
-     */
-    private void response401(ServletRequest req, ServletResponse resp) {
-        try {
-            HttpServletResponse httpServletResponse = (HttpServletResponse) resp;
-            httpServletResponse.sendRedirect("/401");
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage());
-        }
-    }
 }

@@ -12,15 +12,13 @@ import io.sbed.common.Constant;
 import io.sbed.common.utils.JWTUtil;
 import io.sbed.modules.sys.entity.SysUser;
 import io.sbed.modules.sys.service.SysUserService;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -29,15 +27,10 @@ import java.util.Set;
 @Component
 public class ShiroRealm extends AuthorizingRealm {
 
-    private static final Logger _logger = LoggerFactory.getLogger(ShiroRealm.class);
+    private static final Log _logger = LogFactory.getLog(ShiroRealm.class);
 
     @Autowired
     private SysUserService sysUserService;
-
-//    /**
-//     * JWT签名密钥，这里没用。我使用的是用户的MD5密码作为签名密钥
-//     */
-//    public static final String SECRET = "9281e268b77b7c439a20b46fd1483b9a";
 
     /**
      * 必须重写此方法，不然Shiro会报错
@@ -56,33 +49,17 @@ public class ShiroRealm extends AuthorizingRealm {
      * @throws AuthenticationException
      */
     @Override
-    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth)
-            throws AuthenticationException {
-        _logger.info("MyShiroRealm.doGetAuthenticationInfo()");
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) throws AuthenticationException {
+        _logger.info("认证配置-->MyShiroRealm.doGetAuthenticationInfo()");
 
         String token = (String) auth.getCredentials();
-        // 解密获得username，用于和数据库进行对比
         String username = JWTUtil.getUsername(token);
-        if (StringUtils.isBlank(username)) {
-            throw new AuthenticationException("token invalid");
-        }
-
-//        //token超时
-//        String activeTime = JWTUtil.getActiveTime(token);
-//        if(StringUtils.isBlank(activeTime) || System.currentTimeMillis() > NumberUtils.toLong(activeTime,0)+ 1000 * 60 * 30){
-//            throw new IncorrectCredentialsException("token失效，请重新登录");
-//        }
 
         //通过username从数据库中查找 ManagerInfo对象
         //实际项目中，这里可以根据实际情况做缓存，如果不做，Shiro自己也是有时间间隔机制，2分钟内不会重复执行该方法
-        SysUser user = sysUserService.queryObject(NumberUtils.toLong(username));
-
-        if (user == null) {
-            throw new AuthenticationException("用户不存在");
-        }
-
-        if (!JWTUtil.verify(token, username, user.getPassword())) {
-            throw new AuthenticationException("Username或password 错误");
+        SysUser user = sysUserService.queryByUserName(username);
+        if (user == null || !JWTUtil.verify(token, username, user.getPassword())) {
+            throw new AuthenticationException("token无效，请重新登录");
         }
 
         //账号锁定
@@ -90,34 +67,9 @@ public class ShiroRealm extends AuthorizingRealm {
             throw new LockedAccountException("账号已被锁定,请联系管理员");
         }
 
-        SysUser sysUser = sysUserService.queryObject(NumberUtils.toLong(username,-1));
-
-        return new SimpleAuthenticationInfo(sysUser, token, getName());
-
-
-
-
-        /*
-        *
-        * String accessToken = (String) token.getPrincipal();
-
-        //根据accessToken，查询用户信息
-        SysUserToken tokenEntity = sysUserTokenService.queryByToken(accessToken);
-        //token失效
-        if(tokenEntity == null || tokenEntity.getExpireTime().getTime() < System.currentTimeMillis()){
-            throw new IncorrectCredentialsException("token失效，请重新登录");
-        }
-
-        //查询用户信息
-        SysUser user = sysUserService.queryObject(tokenEntity.getUserId());
-        //账号锁定
-        if(Constant.UserStatus.DISABLE.getValue()==user.getStatus()){
-            throw new LockedAccountException("账号已被锁定,请联系管理员");
-        }
-
-        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user, accessToken, getName());
+        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user, token, getName());
         return info;
-        */
+
     }
 
     /**
@@ -143,16 +95,22 @@ public class ShiroRealm extends AuthorizingRealm {
          * 缓存过期之后会再次执行。
          */
         _logger.info("权限配置-->MyShiroRealm.doGetAuthorizationInfo()");
-        String username = JWTUtil.getUsername(principals.toString());
-
-        // 下面的可以使用缓存提升速度
-        //用户权限列表
-        Set<String> permsSet = sysUserService.getUserPermissions(NumberUtils.toLong(username));
-
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-        info.setStringPermissions(permsSet);
-        return info;
 
+        try{
+            SysUser user = (SysUser) principals.getPrimaryPrincipal();
+            Long userId = user.getId();
+
+            // 下面的可以使用缓存提升速度
+            //用户权限列表
+            Set<String> permsSet = sysUserService.getUserPermissions(userId);
+            info.addStringPermissions(permsSet);
+            return info;
+        }catch (Exception ex){
+            _logger.error(ex);
+        }
+
+        return info;
 
     }
 

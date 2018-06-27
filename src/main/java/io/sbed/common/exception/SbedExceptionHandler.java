@@ -1,6 +1,7 @@
 package io.sbed.common.exception;
 
 import io.sbed.common.utils.Result;
+import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authz.AuthorizationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,7 @@ public class SbedExceptionHandler {
 	 */
 	@ExceptionHandler(SbedException.class)
 	public Result handleSbedException(SbedException e){
+		logger.error(e.getMessage(), e);
 		return Result.error(e.getCode(), e.getMessage());
 	}
 
@@ -36,6 +38,12 @@ public class SbedExceptionHandler {
 	public Result handleAuthorizationException(AuthorizationException e){
 		logger.error(e.getMessage(), e);
 		return Result.error("没有权限，请联系管理员授权");
+	}
+
+	@ExceptionHandler(AuthenticationException.class)
+	public Result handleAuthorizationException(AuthenticationException e){
+		logger.error(e.getMessage(), e);
+		return Result.error("认证失败");
 	}
 
 	@ExceptionHandler(Exception.class)

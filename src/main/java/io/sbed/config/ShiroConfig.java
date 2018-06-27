@@ -2,6 +2,7 @@ package io.sbed.config;
 
 import io.sbed.common.shiro.ShiroAuthenticatingFilter;
 import io.sbed.common.shiro.ShiroRealm;
+import io.sbed.common.shiro.ShiroRedisCacheManager;
 import io.sbed.common.shiro.StatelessDefaultSubjectFactory;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
@@ -11,13 +12,9 @@ import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
-import org.apache.shiro.subject.Subject;
-import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
-import org.apache.shiro.web.mgt.DefaultWebSubjectFactory;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -53,7 +50,7 @@ public class ShiroConfig {
         // 设置realm.
         securityManager.setRealm(myShiroRealm());
         //注入缓存管理器
-//        securityManager.setCacheManager(ehCacheManager());
+        securityManager.setCacheManager(redisCacheManager());
         // 关闭shiro自带的session
         DefaultSubjectDAO subjectDAO = new DefaultSubjectDAO();
         DefaultSessionStorageEvaluator defaultSessionStorageEvaluator = new DefaultSessionStorageEvaluator();
@@ -85,16 +82,17 @@ public class ShiroConfig {
         shiroFilterMap.put("jwt", new ShiroAuthenticatingFilter());
         shiroFilterFactoryBean.setFilters(shiroFilterMap);
 
+        //登录
+        shiroFilterFactoryBean.setLoginUrl("/sys/login");
+
         // 拦截器
         Map<String, String> filterMap = new LinkedHashMap<String, String>();
-
-
         filterMap.put("/api/**", "anon");
         filterMap.put("/swagger-resources/**", "anon");//swagger
         filterMap.put("/v2/**", "anon");//swagger
         filterMap.put("/webjars/**", "anon");//swagger
         filterMap.put("/**/druid/**", "anon");
-        filterMap.put("/sys/login", "anon");
+//        filterMap.put("/sys/login", "anon");
         filterMap.put("/sys/getLoginErrorTimes", "anon");
         filterMap.put("/**/*.css", "anon");
         filterMap.put("/**/*.js", "anon");
@@ -177,6 +175,12 @@ public class ShiroConfig {
 //        cacheManager.setCacheManagerConfigFile("classpath:ehcache.xml");
 //        return cacheManager;
 //    }
+
+    @Bean
+    public ShiroRedisCacheManager redisCacheManager(){
+        ShiroRedisCacheManager redisCacheManager = new ShiroRedisCacheManager();
+        return redisCacheManager;
+    }
 
 
 }

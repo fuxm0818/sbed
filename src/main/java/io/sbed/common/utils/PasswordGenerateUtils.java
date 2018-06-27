@@ -1,5 +1,8 @@
 package io.sbed.common.utils;
 
+import org.apache.shiro.crypto.hash.Sha256Hash;
+
+import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,8 +51,18 @@ public class PasswordGenerateUtils {
 	}
 
 	public static void main(String[] args) {
-		for (int i = 0; i < 5; i++) {
-			System.out.println(generatePassword());
+//		for (int i = 0; i < 5; i++) {
+//			System.out.println(generatePassword());
+//		}
+		String str = "123456";
+		MessageDigest md5= null;
+		try {
+			String password = MD5password(str);
+			System.out.println(password);
+			password = new Sha256Hash(password, "1234567890").toHex();
+			System.out.println(password);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 

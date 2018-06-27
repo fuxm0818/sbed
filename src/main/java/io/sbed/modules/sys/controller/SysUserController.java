@@ -71,12 +71,12 @@ public class SysUserController extends AbstractController {
 		}
 		
 		//sha256加密
-		password = new Sha256Hash(password, getUser(sysUserService).getPassword()).toHex();
+		password = new Sha256Hash(password, getUser().getSalt()).toHex();
 		//sha256加密
-		newPassword = new Sha256Hash(newPassword, getUser(sysUserService).getPassword()).toHex();
+		newPassword = new Sha256Hash(newPassword, getUser().getSalt()).toHex();
 
 		//更新密码
-		int count = sysUserService.updatePassword(getUser(sysUserService), password, newPassword);
+		int count = sysUserService.updatePassword(getUser(), password, newPassword);
 		if(count == 0){
 			return Result.error("原密码不正确");
 		}

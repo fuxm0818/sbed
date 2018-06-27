@@ -15,9 +15,9 @@ import java.util.Collection;
 import java.util.Set;
 
 @Component
-public class RedisCacheManager implements CacheManager {
+public class ShiroRedisCacheManager implements CacheManager {
 
-    private String cacheKeyPrefix = "shiro:";
+    private static final String cacheKeyPrefix = "shiro:";
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
@@ -92,7 +92,7 @@ public class RedisCacheManager implements CacheManager {
             if(key instanceof PrincipalCollection) {
                 PrincipalCollection pc=(PrincipalCollection) key;
                 SysUser user =(SysUser) pc.getPrimaryPrincipal();
-                return user.getId();
+                return user.getId()+"-"+user.getUsername();
             }
             return key;
         }
