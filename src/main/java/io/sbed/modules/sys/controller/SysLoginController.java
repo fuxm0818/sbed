@@ -124,20 +124,8 @@ public class SysLoginController extends AbstractController {
 
         Map<String, Object> result = new HashMap<>();
         result.put(Constant.TOKEN_IN_HEADER, token);
-//		result.put("expire", RedisUtils.DEFAULT_EXPIRE);
         Result r = Result.ok().put(result);
         return r;
-    }
-
-    /**
-     * 退出
-     */
-    @RequestMapping(value = "/sys/logout", method = RequestMethod.POST)
-    public Result logout(HttpServletRequest request) {
-        // redis中删除token信息
-        String token = request.getHeader(Constant.TOKEN_IN_HEADER);
-        RedisUtils.delete(Constant.prefix.SYSUSER_USERNAME + JWTUtil.getUsername(token));
-        return Result.ok();
     }
 
     /**

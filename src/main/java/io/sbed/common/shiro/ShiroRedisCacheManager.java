@@ -91,7 +91,8 @@ public class ShiroRedisCacheManager implements CacheManager {
             if(key instanceof PrincipalCollection) {
                 PrincipalCollection pc=(PrincipalCollection) key;
                 SysUser user =(SysUser) pc.getPrimaryPrincipal();
-                return user.getId()+"-"+user.getUsername();
+                //key必须是String类型，参考ShiroRedisCache类
+                return user.getId()+"";
             }
             return key;
         }

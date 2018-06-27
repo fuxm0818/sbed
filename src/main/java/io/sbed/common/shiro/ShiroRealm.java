@@ -17,6 +17,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.cache.Cache;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +68,9 @@ public class ShiroRealm extends AuthorizingRealm {
             throw new LockedAccountException("账号已被锁定,请联系管理员");
         }
 
+        //用户登录后,清除用户缓存,以便重新加载用户权限
+        clearAuthorizationInfoCache(user);
+
         SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user, token, getName());
         return info;
 
@@ -112,6 +116,27 @@ public class ShiroRealm extends AuthorizingRealm {
 
         return info;
 
+    }
+
+
+    /**
+     * 清除所有用户的缓存
+     */
+    public void clearAuthorizationInfoCache() {
+        Cache<Object, AuthorizationInfo> cache = getAuthorizationCache();
+        if(cache!=null) {
+            cache.clear();
+        }
+    }
+
+    /**
+     * 清除指定用户的缓存
+     * @param user
+     */
+    private void clearAuthorizationInfoCache(SysUser user) {
+        Cache<Object, AuthorizationInfo> cache = getAuthorizationCache();
+        //key必须是String类型，参考ShiroRedisCache类
+        cache.remove(user.getId()+"");
     }
 
 }

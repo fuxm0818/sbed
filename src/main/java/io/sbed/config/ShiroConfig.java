@@ -1,9 +1,6 @@
 package io.sbed.config;
 
-import io.sbed.common.shiro.ShiroAuthenticatingFilter;
-import io.sbed.common.shiro.ShiroRealm;
-import io.sbed.common.shiro.ShiroRedisCacheManager;
-import io.sbed.common.shiro.StatelessDefaultSubjectFactory;
+import io.sbed.common.shiro.*;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.mgt.SecurityManager;
@@ -77,9 +74,11 @@ public class ShiroConfig {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         // 必须设置 SecurityManager
         shiroFilterFactoryBean.setSecurityManager(securityManager);
+
         //验证码过滤器
         Map<String, Filter> shiroFilterMap = shiroFilterFactoryBean.getFilters();
         shiroFilterMap.put("jwt", new ShiroAuthenticatingFilter());
+        shiroFilterMap.put("logout", new ShiroLogoutFilter());
         shiroFilterFactoryBean.setFilters(shiroFilterMap);
 
         //登录
@@ -92,7 +91,6 @@ public class ShiroConfig {
         filterMap.put("/v2/**", "anon");//swagger
         filterMap.put("/webjars/**", "anon");//swagger
         filterMap.put("/**/druid/**", "anon");
-//        filterMap.put("/sys/login", "anon");
         filterMap.put("/sys/getLoginErrorTimes", "anon");
         filterMap.put("/**/*.css", "anon");
         filterMap.put("/**/*.js", "anon");
@@ -108,10 +106,11 @@ public class ShiroConfig {
         filterMap.put("/css/**", "anon");
         filterMap.put("/modules/**", "anon");
         filterMap.put("**/*.html", "anon");
-
-
-        // 访问401和404页面不通过我们的Filter
+        //登录
         filterMap.put("/sys/login", "anon");
+        //退出
+        filterMap.put("/sys/logout", "logout");
+        // 访问401和404页面不通过我们的Filter
         filterMap.put("/401", "anon");
         filterMap.put("/404", "anon");
         // 其他的
