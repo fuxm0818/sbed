@@ -16,6 +16,7 @@ import io.sbed.modules.sys.entity.SysUserActive;
 import io.sbed.modules.sys.service.SysUserService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
@@ -30,18 +31,18 @@ import java.util.Set;
 @Component
 public class ShiroRealm extends AuthorizingRealm {
 
-    private static final Log _logger = LogFactory.getLog(ShiroRealm.class);
+    private static final Log log = LogFactory.getLog(ShiroRealm.class);
 
     @Autowired
     private SysUserService sysUserService;
 
-//    /**
-//     * 必须重写此方法，不然Shiro会报错
-//     */
-//    @Override
-//    public boolean supports(AuthenticationToken token) {
-//        return token instanceof ShiroToken;
-//    }
+    /**
+     * 必须重写此方法，不然Shiro会报错
+     */
+    @Override
+    public boolean supports(AuthenticationToken token) {
+        return token instanceof ShiroUsernamePasswordToken;
+    }
 
     /**
      * 认证信息(身份验证)
@@ -53,7 +54,7 @@ public class ShiroRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) throws AuthenticationException {
-        _logger.info("认证配置-->MyShiroRealm.doGetAuthenticationInfo()");
+        log.info("认证配置-->MyShiroRealm.doGetAuthenticationInfo()");
 //
 //        String token = (String) auth.getCredentials();
 //        String username = JWTUtil.getUsername(token);
@@ -70,11 +71,23 @@ public class ShiroRealm extends AuthorizingRealm {
 //            throw new LockedAccountException("账号已被锁定,请联系管理员");
 //        }
 
+        SysUserActive sysUserActive = null;
+        ShiroUsernamePasswordToken shiroUsernamePasswordToken = (ShiroUsernamePasswordToken) auth;
+        if (null == (sysUserActive = shiroUsernamePasswordToken.getSysUserActive())) {
+           try{
+               sysUserActive = this.toLogin(auth);
+           }catch (Exception ex){
+               log.error("登录异常",ex);
+               return null;
+           }
+        }
+        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(sysUserActive, sysUserActive.getSysUser().getPassword(), getName());
+        return info;
 
+    }
 
-//        UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken)auth;
-
-        String username = (String)auth.getPrincipal();
+    private SysUserActive toLogin(AuthenticationToken auth) {
+        String username = (String) auth.getPrincipal();
         //用户信息
         SysUser user = sysUserService.queryByUserName(username);
 
@@ -106,9 +119,7 @@ public class ShiroRealm extends AuthorizingRealm {
         //用户登录后,清除用户缓存,以便重新加载用户权限
         clearAuthorizationInfoCache(user);
 
-        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(sysUserActive, user.getPassword(), getName());
-        return info;
-
+        return sysUserActive;
     }
 
     /**
@@ -133,10 +144,10 @@ public class ShiroRealm extends AuthorizingRealm {
          * 当放到缓存中时，这样的话，doGetAuthorizationInfo就只会执行一次了，
          * 缓存过期之后会再次执行。
          */
-        _logger.info("权限配置-->MyShiroRealm.doGetAuthorizationInfo()");
+        log.info("权限配置-->MyShiroRealm.doGetAuthorizationInfo()");
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 
-        try{
+        try {
             SysUser user = ((SysUserActive) principals.getPrimaryPrincipal()).getSysUser();
             Long userId = user.getId();
 
@@ -145,8 +156,8 @@ public class ShiroRealm extends AuthorizingRealm {
             Set<String> permsSet = sysUserService.getUserPermissions(userId);
             info.addStringPermissions(permsSet);
             return info;
-        }catch (Exception ex){
-            _logger.error(ex);
+        } catch (Exception ex) {
+            log.error(ex);
         }
 
         return info;
@@ -159,19 +170,26 @@ public class ShiroRealm extends AuthorizingRealm {
      */
     public void clearAuthorizationInfoCache() {
         Cache<Object, AuthorizationInfo> cache = getAuthorizationCache();
-        if(cache!=null) {
+        if (cache != null) {
             cache.clear();
         }
     }
 
     /**
      * 清除指定用户的缓存
+     *
      * @param user
      */
     private void clearAuthorizationInfoCache(SysUser user) {
         Cache<Object, AuthorizationInfo> cache = getAuthorizationCache();
         //key必须是String类型，参考ShiroRedisCache类
-        cache.remove(user.getId()+"");
+        cache.remove(user.getId() + "");
+    }
+
+    // 清除缓存(修改权限后调用此方法)
+    public void clearCached() {
+        PrincipalCollection principals = SecurityUtils.getSubject().getPrincipals();
+        super.clearCache(principals);
     }
 
 }
