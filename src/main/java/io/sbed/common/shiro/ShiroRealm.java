@@ -9,8 +9,10 @@ package io.sbed.common.shiro;
  */
 
 import io.sbed.common.Constant;
+import io.sbed.common.cache.RedisUtils;
 import io.sbed.common.utils.JWTUtil;
 import io.sbed.modules.sys.entity.SysUser;
+import io.sbed.modules.sys.entity.SysUserActive;
 import io.sbed.modules.sys.service.SysUserService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,13 +35,13 @@ public class ShiroRealm extends AuthorizingRealm {
     @Autowired
     private SysUserService sysUserService;
 
-    /**
-     * 必须重写此方法，不然Shiro会报错
-     */
-    @Override
-    public boolean supports(AuthenticationToken token) {
-        return token instanceof ShiroToken;
-    }
+//    /**
+//     * 必须重写此方法，不然Shiro会报错
+//     */
+//    @Override
+//    public boolean supports(AuthenticationToken token) {
+//        return token instanceof ShiroToken;
+//    }
 
     /**
      * 认证信息(身份验证)
@@ -52,39 +54,39 @@ public class ShiroRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) throws AuthenticationException {
         _logger.info("认证配置-->MyShiroRealm.doGetAuthenticationInfo()");
+//
+//        String token = (String) auth.getCredentials();
+//        String username = JWTUtil.getUsername(token);
+//
+//        //通过username从数据库中查找 ManagerInfo对象
+//        //实际项目中，这里可以根据实际情况做缓存，如果不做，Shiro自己也是有时间间隔机制，2分钟内不会重复执行该方法
+//        SysUser user = sysUserService.queryByUserName(username);
+//        if (user == null || !JWTUtil.verify(token, username, user.getPassword())) {
+//            throw new AuthenticationException("token无效，请重新登录");
+//        }
+//
+//        //账号锁定
+//        if (Constant.UserStatus.DISABLE.getValue() == user.getStatus()) {
+//            throw new LockedAccountException("账号已被锁定,请联系管理员");
+//        }
 
-        String token = (String) auth.getCredentials();
-        String username = JWTUtil.getUsername(token);
-
-        //通过username从数据库中查找 ManagerInfo对象
-        //实际项目中，这里可以根据实际情况做缓存，如果不做，Shiro自己也是有时间间隔机制，2分钟内不会重复执行该方法
-        SysUser user = sysUserService.queryByUserName(username);
-        if (user == null || !JWTUtil.verify(token, username, user.getPassword())) {
-            throw new AuthenticationException("token无效，请重新登录");
-        }
-
-        //账号锁定
-        if (Constant.UserStatus.DISABLE.getValue() == user.getStatus()) {
-            throw new LockedAccountException("账号已被锁定,请联系管理员");
-        }
 
 
+//        UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken)auth;
 
-        /*
-        UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken)auth;
-
+        String username = (String)auth.getPrincipal();
         //用户信息
-        SysUser user = sysUserService.queryByUserName(usernamePasswordToken.getUsername());
+        SysUser user = sysUserService.queryByUserName(username);
 
         //账号不存在
         if (user == null) {
-            throw new IncorrectCredentialsException();
+            throw new UnknownAccountException();
         }
 
-        //密码错误,使用密码当做加密的盐
-        if (!user.getPassword().equals(new Sha256Hash(usernamePasswordToken.getPassword(), user.getSalt()).toHex())) {
-            throw new IncorrectCredentialsException();
-        }
+//        //密码错误,使用密码当做加密的盐
+//        if (!user.getPassword().equals(new Sha256Hash(auth.getCredentials(), user.getSalt()).toHex())) {
+//            throw new IncorrectCredentialsException();
+//        }
 
         //账号锁定
         if (Constant.UserStatus.DISABLE.getValue() == user.getStatus()) {
@@ -98,14 +100,13 @@ public class ShiroRealm extends AuthorizingRealm {
         SysUserActive sysUserActive = new SysUserActive();
         sysUserActive.setToken(token);
         sysUserActive.setLastActiveTime(System.currentTimeMillis());
+        sysUserActive.setSysUser(user);
         RedisUtils.set(Constant.prefix.SYSUSER_USERNAME + user.getUsername(), sysUserActive);
-
-         */
 
         //用户登录后,清除用户缓存,以便重新加载用户权限
         clearAuthorizationInfoCache(user);
 
-        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user, token, getName());
+        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(sysUserActive, user.getPassword(), getName());
         return info;
 
     }
@@ -136,7 +137,7 @@ public class ShiroRealm extends AuthorizingRealm {
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 
         try{
-            SysUser user = (SysUser) principals.getPrimaryPrincipal();
+            SysUser user = ((SysUserActive) principals.getPrimaryPrincipal()).getSysUser();
             Long userId = user.getId();
 
             // 下面的可以使用缓存提升速度

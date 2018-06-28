@@ -1,6 +1,7 @@
 package io.sbed.modules.sys.controller;
 
 import io.sbed.modules.sys.entity.SysUser;
+import io.sbed.modules.sys.entity.SysUserActive;
 import io.sbed.modules.sys.service.SysUserService;
 import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
@@ -16,7 +17,7 @@ public abstract class AbstractController {
 	protected Logger logger = LoggerFactory.getLogger(getClass());
 	
 	protected SysUser getUser() {
-		return (SysUser) SecurityUtils.getSubject().getPrincipal();
+		return (((SysUserActive) SecurityUtils.getSubject().getPrincipal()).getSysUser());
 	}
 
 	protected SysUser getUser(SysUserService sysUserService) {

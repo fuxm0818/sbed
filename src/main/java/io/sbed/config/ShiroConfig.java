@@ -12,6 +12,7 @@ import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -32,7 +33,7 @@ import java.util.Map;
 public class ShiroConfig {
 
     @Bean("sessionManager")
-    public SessionManager sessionManager(){
+    public SessionManager sessionManager() {
         DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();
         sessionManager.setSessionValidationSchedulerEnabled(false);
         sessionManager.setSessionIdUrlRewritingEnabled(false);
@@ -42,20 +43,25 @@ public class ShiroConfig {
 
 
     @Bean
-    public SecurityManager securityManager(SessionManager sessionManager) {
+    public SecurityManager securityManager(@Qualifier("sessionManager") SessionManager sessionManager,
+                                           @Qualifier("myShiroRealm") ShiroRealm realm,
+                                           @Qualifier("redisCacheManager") ShiroRedisCacheManager redisCacheManager,
+                                           @Qualifier("subjectFactory") SubjectFactory subjectFactory
+    ) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-        // 设置realm.
-        securityManager.setRealm(myShiroRealm());
         //注入缓存管理器
-        securityManager.setCacheManager(redisCacheManager());
-        // 关闭shiro自带的session
+        securityManager.setCacheManager(redisCacheManager);
+        // 设置realm.
+        securityManager.setRealm(realm);
+//        // 关闭shiro自带的session
         DefaultSubjectDAO subjectDAO = new DefaultSubjectDAO();
         DefaultSessionStorageEvaluator defaultSessionStorageEvaluator = new DefaultSessionStorageEvaluator();
         defaultSessionStorageEvaluator.setSessionStorageEnabled(false);
         subjectDAO.setSessionStorageEvaluator(defaultSessionStorageEvaluator);
         securityManager.setSubjectDAO(subjectDAO);
-        securityManager.setSubjectFactory(subjectFactory());
-        securityManager.setSessionManager(sessionManager);
+        securityManager.setSubjectFactory(subjectFactory);
+//        securityManager.setSessionManager(sessionManager);
+//        securityManager.setSessionMode(DefaultWebSecurityManager.NATIVE_SESSION_MODE);
 
         return securityManager;
     }
@@ -77,7 +83,8 @@ public class ShiroConfig {
 
         //验证码过滤器
         Map<String, Filter> shiroFilterMap = shiroFilterFactoryBean.getFilters();
-        shiroFilterMap.put("jwt", new ShiroAuthenticatingFilter());
+//        shiroFilterMap.put("jwt", new ShiroAuthenticatingFilter());
+        shiroFilterMap.put("authc", new ShiroFormAuthenticationFilter());
         shiroFilterMap.put("logout", new ShiroLogoutFilter());
         shiroFilterFactoryBean.setFilters(shiroFilterMap);
 
@@ -107,14 +114,15 @@ public class ShiroConfig {
         filterMap.put("/modules/**", "anon");
         filterMap.put("**/*.html", "anon");
         //登录
-        filterMap.put("/sys/login", "anon");
+//        filterMap.put("/sys/login", "anon");
         //退出
         filterMap.put("/sys/logout", "logout");
         // 访问401和404页面不通过我们的Filter
         filterMap.put("/401", "anon");
         filterMap.put("/404", "anon");
         // 其他的
-        filterMap.put("/**", "jwt");
+//        filterMap.put("/**", "jwt");
+        filterMap.put("/**", "authc");
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterMap);
         return shiroFilterFactoryBean;
@@ -135,14 +143,15 @@ public class ShiroConfig {
     /**
      * 身份认证realm; (这个需要自己写，账号密码校验；权限等)
      */
-    @Bean
-    public ShiroRealm myShiroRealm() {
+    @Bean(name = "myShiroRealm")
+    public ShiroRealm myShiroRealm(@Qualifier("credentialsMatcher") CredentialsMatcher matcher) {
         ShiroRealm myShiroRealm = new ShiroRealm();
+        myShiroRealm.setCredentialsMatcher(matcher);
         return myShiroRealm;
     }
 
-    @Bean
-    public SubjectFactory subjectFactory(){
+    @Bean(name = "subjectFactory")
+    public SubjectFactory subjectFactory() {
         SubjectFactory subjectFactory = new StatelessDefaultSubjectFactory();
         return subjectFactory;
     }
@@ -174,11 +183,24 @@ public class ShiroConfig {
 //        cacheManager.setCacheManagerConfigFile("classpath:ehcache.xml");
 //        return cacheManager;
 //    }
-
-    @Bean
-    public ShiroRedisCacheManager redisCacheManager(){
+    @Bean(name = "redisCacheManager")
+    public ShiroRedisCacheManager redisCacheManager() {
         ShiroRedisCacheManager redisCacheManager = new ShiroRedisCacheManager();
         return redisCacheManager;
+    }
+
+//    //配置自定义的权限登录器
+//    @Bean(name="shiroRealm")
+//    public ShiroRealm shiroRealm(@Qualifier("credentialsMatcher") CredentialsMatcher matcher) {
+//        ShiroRealm shiroRealm=new ShiroRealm();
+//        shiroRealm.setCredentialsMatcher(matcher);
+//        return shiroRealm;
+//    }
+
+    //配置自定义的密码比较器
+    @Bean(name = "credentialsMatcher")
+    public CredentialsMatcher credentialsMatcher() {
+        return new CredentialsMatcher();
     }
 
 

@@ -95,7 +95,7 @@ public class ShiroAuthenticatingFilter extends AuthenticatingFilter {
      * 拒绝访问的出来
      * @param request
      * @param response
-     * @return true允许访问，false拒绝访问
+     * @return false允许访问，true拒绝访问
      * @throws Exception
      */
     @Override

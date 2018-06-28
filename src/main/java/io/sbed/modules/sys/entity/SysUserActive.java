@@ -1,6 +1,7 @@
 package io.sbed.modules.sys.entity;
 
 
+import java.io.Serializable;
 
 /**
  * Description:  <br>
@@ -9,10 +10,11 @@ package io.sbed.modules.sys.entity;
  * @author fuxiangming
  * @date 2018/6/26 09:27
  */
-public class SysUserActive {
+public class SysUserActive implements Serializable {
 
     private long lastActiveTime;
     private String token;
+    private SysUser sysUser;
 
     public long getLastActiveTime() {
         return lastActiveTime;
@@ -28,5 +30,13 @@ public class SysUserActive {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public SysUser getSysUser() {
+        return sysUser;
+    }
+
+    public void setSysUser(SysUser sysUser) {
+        this.sysUser = sysUser;
     }
 }

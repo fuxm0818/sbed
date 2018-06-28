@@ -1,7 +1,11 @@
 package io.sbed.common.exception;
 
 import io.sbed.common.utils.Result;
+import org.apache.http.HttpStatus;
 import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.LockedAccountException;
+import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authz.AuthorizationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,10 +44,34 @@ public class SbedExceptionHandler {
 		return Result.error("没有权限，请联系管理员授权");
 	}
 
+	@ExceptionHandler(CaptchaException.class)
+	public Result handleCaptchaException(CaptchaException e){
+		logger.error(e.getMessage(), e);
+		return Result.error("验证码错误").put("errorTimes",e.getErrorTimes());
+	}
+
+	@ExceptionHandler(UnknownAccountException.class)
+	public Result handleUnknownAccountException(UnknownAccountException e){
+		logger.error(e.getMessage(), e);
+		return Result.error("账号不存在");
+	}
+
+	@ExceptionHandler(IncorrectCredentialsException.class)
+	public Result handleIncorrectCredentialsException(IncorrectCredentialsException e){
+		logger.error(e.getMessage(), e);
+		return Result.error("用户名/密码错误");
+	}
+
+	@ExceptionHandler(LockedAccountException.class)
+	public Result handleLockedAccountException(LockedAccountException e){
+		logger.error(e.getMessage(), e);
+		return Result.error("账号已被锁定");
+	}
+
 	@ExceptionHandler(AuthenticationException.class)
 	public Result handleAuthorizationException(AuthenticationException e){
 		logger.error(e.getMessage(), e);
-		return Result.error("认证失败");
+		return Result.error(HttpStatus.SC_UNAUTHORIZED,"认证失败");
 	}
 
 	@ExceptionHandler(Exception.class)
