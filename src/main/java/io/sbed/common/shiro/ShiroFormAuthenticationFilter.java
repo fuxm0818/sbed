@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 
@@ -28,7 +29,7 @@ public class ShiroFormAuthenticationFilter extends FormAuthenticationFilter {
         String host = this.getHost(request);
         SysUserActive sysUserActive = (SysUserActive) request.getAttribute("sysUserActive");
 
-        ShiroUsernamePasswordToken usernamePasswordToken =  new ShiroUsernamePasswordToken(username, password, rememberMe, host,sysUserActive);
+        ShiroUsernamePasswordToken usernamePasswordToken = new ShiroUsernamePasswordToken(username, password, rememberMe, host, sysUserActive);
 
         return usernamePasswordToken;
     }
@@ -64,18 +65,18 @@ public class ShiroFormAuthenticationFilter extends FormAuthenticationFilter {
         }
 
         if (isLoginRequest(request, response)) {
-            if (isLoginSubmission(request, response)) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Login submission detected.  Attempting to execute login.");
-                }
+//            if (isLoginSubmission(request, response)) {
+//                if (log.isTraceEnabled()) {
+//                    log.trace("Login submission detected.  Attempting to execute login.");
+//                }
                 return executeLogin(request, response);
-            } else {
-                if (log.isTraceEnabled()) {
-                    log.trace("Login page view.");
-                }
-                //allow them to see the login page ;)
-                return true;
-            }
+//            } else {
+//                if (log.isTraceEnabled()) {
+//                    log.trace("Login page view.");
+//                }
+//                //allow them to see the login page ;)
+//                return true;
+//            }
         } else {
             String tokenInHeader = this.getRequestToken((HttpServletRequest) request);
             //token失效
@@ -98,19 +99,25 @@ public class ShiroFormAuthenticationFilter extends FormAuthenticationFilter {
 //                    throw new AuthenticationException();
 //                    httpServletRequest.setAttribute("shiroLoginFailure", "tokenError");
 //                    return true;
-                    }else{
-                        request.setAttribute("sysUserActive",sysUserActive);
+                    } else {
+                        request.setAttribute("sysUserActive", sysUserActive);
                         return executeLogin(request, response);
                     }
                 }
+            } else {
+//                request.setAttribute(DEFAULT_ERROR_KEY_ATTRIBUTE_NAME, "AuthenticationException");
+                setFailureAttribute(request, new AuthenticationException());
+                return true;
+
             }
 
-            if (log.isTraceEnabled()) {
-                log.trace("Attempting to access a path which requires authentication.  Forwarding to the " +
-                        "Authentication url [" + getLoginUrl() + "]");
-            }
-            redirectToLogin(request, response);
-            return false;
+//            if (log.isTraceEnabled()) {
+//                log.trace("Attempting to access a path which requires authentication.  Forwarding to the " +
+//                        "Authentication url [" + getLoginUrl() + "]");
+//            }
+
+//            redirectToLogin(request, response);
+//            return false;
         }
 
     }

@@ -174,7 +174,9 @@ public class SysLoginController extends AbstractController {
         String exceptionClassName = (String) request.getAttribute("shiroLoginFailure");
         if (StringUtils.isNotBlank(exceptionClassName)) {
             RedisUtils.set(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT, ++errorTimes, Constant.Time.Second.MINUTE_5);
-            if (UnknownAccountException.class.getName().equals(exceptionClassName)) {
+            if (AuthenticationException.class.getName().equals(exceptionClassName)) {
+                throw new AuthenticationException();
+            } else if (UnknownAccountException.class.getName().equals(exceptionClassName)) {
                 throw new UnknownAccountException();
             } else if (IncorrectCredentialsException.class.getName().equals(exceptionClassName)) {
                 throw new IncorrectCredentialsException();

@@ -74,12 +74,7 @@ public class ShiroRealm extends AuthorizingRealm {
         SysUserActive sysUserActive = null;
         ShiroUsernamePasswordToken shiroUsernamePasswordToken = (ShiroUsernamePasswordToken) auth;
         if (null == (sysUserActive = shiroUsernamePasswordToken.getSysUserActive())) {
-           try{
-               sysUserActive = this.toLogin(auth);
-           }catch (Exception ex){
-               log.error("登录异常",ex);
-               return null;
-           }
+            sysUserActive = this.toLogin(auth);
         }
         SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(sysUserActive, sysUserActive.getSysUser().getPassword(), getName());
         return info;
