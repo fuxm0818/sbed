@@ -118,8 +118,9 @@
                         } else {
                             vm.error = true;
                             vm.errorMsg = r.msg;
-                            vm.errorTimes = r.errorTimes;
+                            // vm.errorTimes = r.errorTimes;
                             vm.refreshCode();
+                            vm.getLoginErrorTimes();
                         }
                     }
                 });

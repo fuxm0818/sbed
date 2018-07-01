@@ -5,14 +5,13 @@ import io.sbed.common.Constant;
 import io.sbed.common.cache.RedisUtils;
 import io.sbed.common.exception.CaptchaException;
 import io.sbed.common.utils.Result;
+import io.sbed.modules.sys.entity.SysUserActive;
 import io.sbed.modules.sys.service.SysUserService;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.IncorrectCredentialsException;
-import org.apache.shiro.authc.LockedAccountException;
-import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -131,48 +130,12 @@ public class SysLoginController extends AbstractController {
 
     @RequestMapping(value = "/sys/login")
     public Result login(HttpServletRequest request, String captchaT) throws Exception {
-//        long errorTimes = NumberUtils.toInt(RedisUtils.get(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT), 0);
-//
-//        //验证码
-//        if (errorTimes >= 3) {
-//            String kaptcha = getKaptcha(captchaT);
-//            if (!captcha.equalsIgnoreCase(kaptcha)) {
-//                // redis中获取登录错误次数
-//                RedisUtils.set(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT, ++errorTimes, Constant.Time.Second.MINUTE_5);
-////                return Result.error("验证码错误").put("errorTimes", errorTimes);
-//                throw new SbedException("验证码错误");
-//            }
-//        }
-//        RedisUtils.delete(Constant.prefix.CAPTCHA_TEXT + captchaT);
-//
-//        Subject subject = SecurityUtils.getSubject();
-//
-//        AuthenticationToken token = new UsernamePasswordToken(username, password);
-//
         Map<String, Object> result = new HashMap<>();
-//        try {
-//            // 登录，即身份验证
-//            subject.login(token);
-//            SysUserActive sysUserActive = (SysUserActive)subject.getPrincipal();
-//            result.put(Constant.TOKEN_IN_HEADER, sysUserActive.getToken());
-//
-//        } catch (IncorrectCredentialsException e) {
-//            RedisUtils.set(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT, ++errorTimes, Constant.Time.Second.MINUTE_5);
-//            return Result.error("用户名或密码错误").put("errorTimes", errorTimes);
-//        } catch (UnauthenticatedException e) {
-//            RedisUtils.set(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT, ++errorTimes, Constant.Time.Second.MINUTE_5);
-//            return Result.error("用户名或密码错误").put("errorTimes", errorTimes);
-//        } catch (LockedAccountException e) {
-//            RedisUtils.set(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT, ++errorTimes, Constant.Time.Second.MINUTE_5);
-//            return Result.error("登录失败，该用户已被冻结").put("errorTimes", errorTimes);
-//        }
-
-
-        long errorTimes = NumberUtils.toLong((String)request.getAttribute("captchaErrorTimes"),0);
         //shiro在认证通过后出现错误后将异常类路径通过request返回
         //如果登陆失败从request中获取认证异常信息，shiroLoginFailure就是shiro异常类的全限定名
         String exceptionClassName = (String) request.getAttribute("shiroLoginFailure");
         if (StringUtils.isNotBlank(exceptionClassName)) {
+            long errorTimes = NumberUtils.toInt(RedisUtils.get(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT), 0);
             RedisUtils.set(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT, ++errorTimes, Constant.Time.Second.MINUTE_5);
             if (AuthenticationException.class.getName().equals(exceptionClassName)) {
                 throw new AuthenticationException();
@@ -184,16 +147,20 @@ public class SysLoginController extends AbstractController {
                 throw new LockedAccountException();
             } else if ("tokenError".equals(exceptionClassName)) {
                 throw new AuthenticationException();
-            } else if ("captchaError".equals(exceptionClassName)) {
-                throw new CaptchaException("验证码错误", errorTimes);
+            } else if ("CaptchaException".equals(exceptionClassName)) {
+                throw new CaptchaException();
+            }else if ("ExpiredCredentialsException".equals(exceptionClassName)) {
+                throw new ExpiredCredentialsException();
+            }else if ("ExcessiveAttemptsException".equals(exceptionClassName)) {
+                throw new ExcessiveAttemptsException();
             } else {
                 throw new Exception(); //最终在设置的异常处理器中生成未知错误
             }
         }
 
 //        //获取token放入result中
-//        SysUserActive sysUserActive = (SysUserActive) SecurityUtils.getSubject().getPrincipal();
-//        result.put(Constant.TOKEN_IN_HEADER, sysUserActive.getToken());
+        SysUserActive sysUserActive = (SysUserActive) SecurityUtils.getSubject().getPrincipals().getPrimaryPrincipal();
+        result.put(Constant.TOKEN_IN_HEADER, sysUserActive.getToken());
 
         //此方法不处理登录成功(认证成功)的情况
         //如果登录失败还到login页面

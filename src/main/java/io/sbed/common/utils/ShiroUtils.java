@@ -1,10 +1,9 @@
 package io.sbed.common.utils;
 
 import io.sbed.modules.sys.entity.SysUser;
+import io.sbed.modules.sys.entity.SysUserActive;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Component;
 
 /**
@@ -24,7 +23,7 @@ public class ShiroUtils {
 	}
 
 	public static SysUser getUserEntity() {
-		return (SysUser)SecurityUtils.getSubject().getPrincipal();
+		return ((SysUserActive)SecurityUtils.getSubject().getPrincipals().getPrimaryPrincipal()).getSysUser();
 	}
 
 	public static Long getUserId() {

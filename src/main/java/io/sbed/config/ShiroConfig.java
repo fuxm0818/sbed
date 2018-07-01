@@ -84,7 +84,7 @@ public class ShiroConfig {
         //验证码过滤器
         Map<String, Filter> shiroFilterMap = shiroFilterFactoryBean.getFilters();
 //        shiroFilterMap.put("jwt", new ShiroAuthenticatingFilter());
-        shiroFilterMap.put("authc", new ShiroFormAuthenticationFilter());
+        shiroFilterMap.put("authc", new JWTAuthenticatingFilter());
         shiroFilterMap.put("logout", new ShiroLogoutFilter());
         shiroFilterFactoryBean.setFilters(shiroFilterMap);
 

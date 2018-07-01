@@ -14,6 +14,7 @@ import io.sbed.common.utils.JWTUtil;
 import io.sbed.modules.sys.entity.SysUser;
 import io.sbed.modules.sys.entity.SysUserActive;
 import io.sbed.modules.sys.service.SysUserService;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.shiro.SecurityUtils;
@@ -26,6 +27,7 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Set;
 
 @Component
@@ -41,7 +43,7 @@ public class ShiroRealm extends AuthorizingRealm {
      */
     @Override
     public boolean supports(AuthenticationToken token) {
-        return token instanceof ShiroUsernamePasswordToken;
+        return token instanceof JWTToken;
     }
 
     /**
@@ -55,30 +57,15 @@ public class ShiroRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) throws AuthenticationException {
         log.info("认证配置-->MyShiroRealm.doGetAuthenticationInfo()");
-//
-//        String token = (String) auth.getCredentials();
-//        String username = JWTUtil.getUsername(token);
-//
-//        //通过username从数据库中查找 ManagerInfo对象
-//        //实际项目中，这里可以根据实际情况做缓存，如果不做，Shiro自己也是有时间间隔机制，2分钟内不会重复执行该方法
-//        SysUser user = sysUserService.queryByUserName(username);
-//        if (user == null || !JWTUtil.verify(token, username, user.getPassword())) {
-//            throw new AuthenticationException("token无效，请重新登录");
-//        }
-//
-//        //账号锁定
-//        if (Constant.UserStatus.DISABLE.getValue() == user.getStatus()) {
-//            throw new LockedAccountException("账号已被锁定,请联系管理员");
-//        }
-
+        JWTToken jwtToken = (JWTToken)auth;
         SysUserActive sysUserActive = null;
-        ShiroUsernamePasswordToken shiroUsernamePasswordToken = (ShiroUsernamePasswordToken) auth;
-        if (null == (sysUserActive = shiroUsernamePasswordToken.getSysUserActive())) {
-            sysUserActive = this.toLogin(auth);
+        if(jwtToken.isLoginRequest()){
+             sysUserActive = this.toLogin(auth);
+        }else{
+            sysUserActive = this.toCheckToken(jwtToken);
         }
         SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(sysUserActive, sysUserActive.getSysUser().getPassword(), getName());
         return info;
-
     }
 
     private SysUserActive toLogin(AuthenticationToken auth) {
@@ -114,6 +101,26 @@ public class ShiroRealm extends AuthorizingRealm {
         //用户登录后,清除用户缓存,以便重新加载用户权限
         clearAuthorizationInfoCache(user);
 
+        return sysUserActive;
+    }
+
+    private SysUserActive toCheckToken(JWTToken jwtToken){
+        String tokenInHeader = jwtToken.getToken();
+
+        // 解密获得username，用于和数据库进行对比
+        String usernameInToken = JWTUtil.getUsername(tokenInHeader);
+        SysUserActive sysUserActive = RedisUtils.get(Constant.prefix.SYSUSER_USERNAME + usernameInToken, SysUserActive.class);
+        if (null == sysUserActive || StringUtils.isBlank(sysUserActive.getToken()) || !tokenInHeader.equalsIgnoreCase(sysUserActive.getToken())) {
+            log.error("token无效");
+            throw new AuthenticationException();
+        } else {
+            //token超时
+            if (System.currentTimeMillis() > sysUserActive.getLastActiveTime() + Constant.Time.Millisecond.MINUTE_30) {
+                RedisUtils.delete(Constant.prefix.SYSUSER_USERNAME + usernameInToken);
+                log.error("token超时失效");
+                throw new ExpiredCredentialsException();
+            }
+        }
         return sysUserActive;
     }
 
@@ -185,6 +192,19 @@ public class ShiroRealm extends AuthorizingRealm {
     public void clearCached() {
         PrincipalCollection principals = SecurityUtils.getSubject().getPrincipals();
         super.clearCache(principals);
+    }
+
+    /**
+     * 获取请求的token
+     */
+    private String getRequestToken(HttpServletRequest httpRequest) {
+        //从header中获取token
+        String token = httpRequest.getHeader(Constant.TOKEN_IN_HEADER);
+        //如果header中不存在token，则从参数中获取token
+        if (StringUtils.isBlank(token)) {
+            token = httpRequest.getParameter(Constant.TOKEN_IN_HEADER);
+        }
+        return token;
     }
 
 }

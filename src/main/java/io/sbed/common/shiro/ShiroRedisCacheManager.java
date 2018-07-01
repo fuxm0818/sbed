@@ -2,7 +2,7 @@ package io.sbed.common.shiro;
 
 
 import io.sbed.common.Constant;
-import io.sbed.modules.sys.entity.SysUser;
+import io.sbed.modules.sys.entity.SysUserActive;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 import org.apache.shiro.cache.CacheManager;
@@ -92,9 +92,9 @@ public class ShiroRedisCacheManager implements CacheManager {
             //此处很重要,如果key是登录凭证,那么这是访问用户的授权缓存;将登录凭证转为user对象,返回user的id属性做为hash key,否则会以user对象做为hash key,这样就不好清除指定用户的缓存了
             if(key instanceof PrincipalCollection) {
                 PrincipalCollection pc=(PrincipalCollection) key;
-                SysUser user =(SysUser) pc.getPrimaryPrincipal();
+                SysUserActive user =(SysUserActive) pc.getPrimaryPrincipal();
                 //key必须是String类型，参考ShiroRedisCache类
-                return user.getId()+"";
+                return user.getSysUser().getId()+"";
             }
             return key;
         }

@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import io.sbed.common.utils.HttpContextUtils;
 import io.sbed.common.utils.IPUtils;
 import io.sbed.modules.sys.entity.SysLog;
-import io.sbed.modules.sys.entity.SysUser;
+import io.sbed.modules.sys.entity.SysUserActive;
 import io.sbed.modules.sys.service.SysLogService;
 import org.apache.shiro.SecurityUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -81,8 +81,8 @@ public class SysLogAspect {
 		sysLog.setIp(IPUtils.getIpAddr(request));
 
 		//用户名
-		SysUser sysuser = (SysUser) SecurityUtils.getSubject().getPrincipal();
-		sysLog.setUsername(sysuser.getUsername());
+		SysUserActive sysuser = (SysUserActive) SecurityUtils.getSubject().getPrincipals().getPrimaryPrincipal();
+		sysLog.setUsername(sysuser.getSysUser().getUsername());
 
 		sysLog.setTime(time);
 		sysLog.setCreateTime(new Date());
