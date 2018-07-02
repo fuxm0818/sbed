@@ -18,7 +18,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * 登出
+ * Description: 退出过滤器 <br>
+ * Copyright:DATANG SOFTWARE CO.LTD<br>
+ *
+ * @author fuxiangming
+ * @date 2018/6/14 下午4:09
  */
 public class ShiroLogoutFilter extends LogoutFilter {
 

@@ -16,6 +16,14 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+
+/**
+ * Description: 认证过滤器 <br>
+ * Copyright:DATANG SOFTWARE CO.LTD<br>
+ *
+ * @author fuxiangming
+ * @date 2018/6/14 下午4:09
+ */
 public class JWTAuthenticatingFilter extends AuthenticatingFilter {
 
     private static final Log log = LogFactory.getLog(JWTAuthenticatingFilter.class);
@@ -33,6 +41,7 @@ public class JWTAuthenticatingFilter extends AuthenticatingFilter {
     }
 
     /**
+     *
      * @param request
      * @param response
      * @return true：继续执行其他拦截器，false：自己已经处理完成了
@@ -63,11 +72,13 @@ public class JWTAuthenticatingFilter extends AuthenticatingFilter {
             }
             return executeLogin(request, response);
         }else{
-            if(executeLogin(request, response)){
-                redirectToLogin(request, response);
+            if(!executeLogin(request, response)){
+                //转发到登录
+                request.getRequestDispatcher(getLoginUrl()).forward(request,response);
                 return false;
+            }else{
+                return true;
             }
-            return true;
         }
     }
 
@@ -86,7 +97,7 @@ public class JWTAuthenticatingFilter extends AuthenticatingFilter {
         String className = e.getClass().getName();
         request.setAttribute(FormAuthenticationFilter.DEFAULT_ERROR_KEY_ATTRIBUTE_NAME, className);
         //login failed, let request continue back to the login page:
-        return true;
+        return false;
     }
 
 

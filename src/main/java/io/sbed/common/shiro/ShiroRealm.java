@@ -1,13 +1,5 @@
 package io.sbed.common.shiro;
 
-/**
- * Description: 身份校验核心类 <br>
- * Copyright:DATANG SOFTWARE CO.LTD<br>
- *
- * @author fuxiangming
- * @date 2018/6/14 下午4:09
- */
-
 import io.sbed.common.Constant;
 import io.sbed.common.cache.RedisUtils;
 import io.sbed.common.utils.JWTUtil;
@@ -30,6 +22,13 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Set;
 
+/**
+ * Description: 身份校验核心类 <br>
+ * Copyright:DATANG SOFTWARE CO.LTD<br>
+ *
+ * @author fuxiangming
+ * @date 2018/6/14 下午4:09
+ */
 @Component
 public class ShiroRealm extends AuthorizingRealm {
 
@@ -117,7 +116,7 @@ public class ShiroRealm extends AuthorizingRealm {
             //token超时
             if (System.currentTimeMillis() > sysUserActive.getLastActiveTime() + Constant.Time.Millisecond.MINUTE_30) {
                 RedisUtils.delete(Constant.prefix.SYSUSER_USERNAME + usernameInToken);
-                log.error("token超时失效");
+                log.error("token超时失效,凭证过期");
                 throw new ExpiredCredentialsException();
             }
         }

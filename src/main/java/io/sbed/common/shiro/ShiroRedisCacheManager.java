@@ -16,6 +16,14 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+
+/**
+ * Description: redis缓存管理器 <br>
+ * Copyright:DATANG SOFTWARE CO.LTD<br>
+ *
+ * @author fuxiangming
+ * @date 2018/6/14 下午4:09
+ */
 @Component
 public class ShiroRedisCacheManager implements CacheManager {
 

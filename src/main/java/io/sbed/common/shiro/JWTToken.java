@@ -2,6 +2,13 @@ package io.sbed.common.shiro;
 
 import org.apache.shiro.authc.AuthenticationToken;
 
+/**
+ * Description: 认证token <br>
+ * Copyright:DATANG SOFTWARE CO.LTD<br>
+ *
+ * @author fuxiangming
+ * @date 2018/6/14 下午4:09
+ */
 public class JWTToken implements AuthenticationToken {
 
     private String username;

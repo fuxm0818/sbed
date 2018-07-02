@@ -147,12 +147,12 @@ public class SysLoginController extends AbstractController {
                 throw new LockedAccountException();
             } else if ("tokenError".equals(exceptionClassName)) {
                 throw new AuthenticationException();
-            } else if ("CaptchaException".equals(exceptionClassName)) {
+            } else if (CaptchaException.class.getName().equals(exceptionClassName)) {
                 throw new CaptchaException();
-            }else if ("ExpiredCredentialsException".equals(exceptionClassName)) {
+            }else if (ExpiredCredentialsException.class.getName().equals(exceptionClassName)) {
                 throw new ExpiredCredentialsException();
-            }else if ("ExcessiveAttemptsException".equals(exceptionClassName)) {
-                throw new ExcessiveAttemptsException();
+//            }else if (ExcessiveAttemptsException.class.getName().equals(exceptionClassName)) {
+//                throw new ExcessiveAttemptsException();
             } else {
                 throw new Exception(); //最终在设置的异常处理器中生成未知错误
             }

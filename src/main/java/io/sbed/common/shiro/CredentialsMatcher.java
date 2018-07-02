@@ -6,7 +6,13 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 
-
+/**
+ * Description: 凭证匹配器，验证密码 <br>
+ * Copyright:DATANG SOFTWARE CO.LTD<br>
+ *
+ * @author fuxiangming
+ * @date 2018/6/14 下午4:09
+ */
 public class CredentialsMatcher extends SimpleCredentialsMatcher {
 
     @Override
