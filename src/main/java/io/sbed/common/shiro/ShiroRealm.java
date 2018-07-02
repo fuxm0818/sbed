@@ -1,5 +1,6 @@
 package io.sbed.common.shiro;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import io.sbed.common.Constant;
 import io.sbed.common.cache.RedisUtils;
 import io.sbed.common.utils.JWTUtil;
@@ -77,22 +78,18 @@ public class ShiroRealm extends AuthorizingRealm {
             throw new UnknownAccountException();
         }
 
-//        //密码错误,使用密码当做加密的盐
-//        if (!user.getPassword().equals(new Sha256Hash(auth.getCredentials(), user.getSalt()).toHex())) {
-//            throw new IncorrectCredentialsException();
-//        }
-
         //账号锁定
         if (Constant.UserStatus.DISABLE.getValue() == user.getStatus()) {
             throw new LockedAccountException();
         }
 
         //生成token
-        String token = JWTUtil.sign(user.getUsername() + "", user.getPassword() + "");
+        String token = JWTUtil.sign(user.getUsername() + "", user.getSalt() + "");
 
         //保存到数据库redis
         SysUserActive sysUserActive = new SysUserActive();
         sysUserActive.setToken(token);
+        //最新活动时间
         sysUserActive.setLastActiveTime(System.currentTimeMillis());
         sysUserActive.setSysUser(user);
         RedisUtils.set(Constant.prefix.SYSUSER_USERNAME + user.getUsername(), sysUserActive);
@@ -119,7 +116,14 @@ public class ShiroRealm extends AuthorizingRealm {
                 log.error("token超时失效,凭证过期");
                 throw new ExpiredCredentialsException();
             }
+            if(JWTUtil.verify(tokenInHeader,sysUserActive.getSysUser().getUsername(),sysUserActive.getSysUser().getSalt())){
+                log.error("token校验无效");
+                throw new JWTVerificationException("token校验无效");
+            }
         }
+        //最新活动时间
+        sysUserActive.setLastActiveTime(System.currentTimeMillis());
+        RedisUtils.set(Constant.prefix.SYSUSER_USERNAME + sysUserActive.getSysUser().getUsername(), sysUserActive);
         return sysUserActive;
     }
 

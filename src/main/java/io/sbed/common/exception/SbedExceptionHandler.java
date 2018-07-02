@@ -1,5 +1,6 @@
 package io.sbed.common.exception;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import io.sbed.common.utils.Result;
 import org.apache.http.HttpStatus;
 import org.apache.shiro.authc.*;
@@ -85,6 +86,12 @@ public class SbedExceptionHandler {
 
 	@ExceptionHandler(Exception.class)
 	public Result handleException(Exception e){
+		logger.error(e.getMessage(), e);
+		return Result.error();
+	}
+
+	@ExceptionHandler(JWTVerificationException.class)
+	public Result handleJWTVerificationException(JWTVerificationException e){
 		logger.error(e.getMessage(), e);
 		return Result.error();
 	}

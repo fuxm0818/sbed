@@ -6,6 +6,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import io.sbed.common.Constant;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
@@ -20,7 +21,7 @@ import java.util.Date;
 public class JWTUtil {
 
     // 过期时间5分钟
-    private static final long EXPIRE_TIME = 24 * 60 * 60 * 1000;
+    private static final long EXPIRE_TIME = Constant.Time.Millisecond.day_1;
 
     /**
      * 校验token是否正确

@@ -137,6 +137,7 @@ public class Constant {
         }
         public class Millisecond{
             public static final long MINUTE_30 = 1000 * 60 * 30;
+            public final static long day_1 = 24 * 60 * 60 * 1000;
         }
     }
 

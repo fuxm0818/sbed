@@ -1,5 +1,6 @@
 package io.sbed.modules.sys.controller;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.google.code.kaptcha.Producer;
 import io.sbed.common.Constant;
 import io.sbed.common.cache.RedisUtils;
@@ -151,8 +152,8 @@ public class SysLoginController extends AbstractController {
                 throw new CaptchaException();
             }else if (ExpiredCredentialsException.class.getName().equals(exceptionClassName)) {
                 throw new ExpiredCredentialsException();
-//            }else if (ExcessiveAttemptsException.class.getName().equals(exceptionClassName)) {
-//                throw new ExcessiveAttemptsException();
+            }else if (JWTVerificationException.class.getName().equals(exceptionClassName)) {
+                throw new JWTVerificationException("token校验无效");
             } else {
                 throw new Exception(); //最终在设置的异常处理器中生成未知错误
             }

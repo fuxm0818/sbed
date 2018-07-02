@@ -8,7 +8,6 @@ import io.sbed.modules.sys.entity.SysUser;
 import io.sbed.modules.sys.service.SysRoleService;
 import io.sbed.modules.sys.service.SysUserRoleService;
 import io.sbed.modules.sys.service.SysUserService;
-import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.springframework.beans.factory.annotation.Autowired;
