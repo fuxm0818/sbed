@@ -13,13 +13,11 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
-import org.apache.shiro.cache.Cache;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Set;
 
 /**
@@ -98,7 +96,7 @@ public class ShiroRealm extends AuthorizingRealm {
         RedisUtils.set(Constant.prefix.SYSUSER_USERNAME + user.getUsername(), sysUserActive);
 
         //用户登录后,清除用户缓存,以便重新加载用户权限
-        clearAuthorizationInfoCache(user);
+//        clearAuthorizationInfoCache(user);
 
         return sysUserActive;
     }
@@ -166,44 +164,31 @@ public class ShiroRealm extends AuthorizingRealm {
     }
 
 
-    /**
-     * 清除所有用户的缓存
-     */
-    public void clearAuthorizationInfoCache() {
-        Cache<Object, AuthorizationInfo> cache = getAuthorizationCache();
-        if (cache != null) {
-            cache.clear();
-        }
-    }
-
-    /**
-     * 清除指定用户的缓存
-     *
-     * @param user
-     */
-    private void clearAuthorizationInfoCache(SysUser user) {
-        Cache<Object, AuthorizationInfo> cache = getAuthorizationCache();
-        //key必须是String类型，参考ShiroRedisCache类
-        cache.remove(user.getId() + "");
-    }
+//    /**
+//     * 清除所有用户的缓存
+//     */
+//    public void clearAuthorizationInfoCache() {
+//        Cache<Object, AuthorizationInfo> cache = getAuthorizationCache();
+//        if (cache != null) {
+//            cache.clear();
+//        }
+//    }
+//
+//    /**
+//     * 清除指定用户的缓存
+//     *
+//     * @param user
+//     */
+//    private void clearAuthorizationInfoCache(SysUser user) {
+//        Cache<Object, AuthorizationInfo> cache = getAuthorizationCache();
+//        //key必须是String类型，参考ShiroRedisCache类
+//        cache.remove(user.getId() + "");
+//    }
 
     // 清除缓存(修改权限后调用此方法)
     public void clearCached() {
         PrincipalCollection principals = SecurityUtils.getSubject().getPrincipals();
         super.clearCache(principals);
-    }
-
-    /**
-     * 获取请求的token
-     */
-    private String getRequestToken(HttpServletRequest httpRequest) {
-        //从header中获取token
-        String token = httpRequest.getHeader(Constant.TOKEN_IN_HEADER);
-        //如果header中不存在token，则从参数中获取token
-        if (StringUtils.isBlank(token)) {
-            token = httpRequest.getParameter(Constant.TOKEN_IN_HEADER);
-        }
-        return token;
     }
 
 }
