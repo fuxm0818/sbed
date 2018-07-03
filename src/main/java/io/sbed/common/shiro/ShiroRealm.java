@@ -19,8 +19,6 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -64,13 +62,13 @@ public class ShiroRealm extends AuthorizingRealm {
         } else {
             sysUserActive = this.toCheckToken(jwtToken);
         }
-        SysUser user = sysUserActive.getSysUser();
+//        SysUser user = sysUserActive.getSysUser();
+//
+//        List<Object> principals=new ArrayList<Object>();
+//        principals.add(user.getUsername());
+//        principals.add(user);
 
-        List<Object> principals=new ArrayList<Object>();
-        principals.add(user.getUsername());
-        principals.add(user);
-
-        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(principals, sysUserActive.getSysUser().getPassword(), getName());
+        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(sysUserActive, sysUserActive.getSysUser().getPassword(), getName());
 //        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(
 //                user.getUsername(), //用户名
 //                user.getPassword(), //密码
@@ -103,6 +101,7 @@ public class ShiroRealm extends AuthorizingRealm {
         sysUserActive.setToken(token);
         //最新活动时间
         sysUserActive.setLastActiveTime(System.currentTimeMillis());
+        sysUserActive.setUsername(username);
         sysUserActive.setSysUser(user);
         RedisUtils.set(Constant.prefix.SYSUSER_USERNAME + user.getUsername(), sysUserActive);
 

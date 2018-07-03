@@ -17,7 +17,12 @@ public abstract class AbstractController {
 	protected Logger logger = LoggerFactory.getLogger(getClass());
 	
 	protected SysUser getUser() {
-		return (((SysUserActive) SecurityUtils.getSubject().getPrincipals().getPrimaryPrincipal()).getSysUser());
+		Object object = SecurityUtils.getSubject().getPrincipals().getPrimaryPrincipal();
+		if(object instanceof  SysUserActive){
+			SysUserActive sysUserActive = (SysUserActive)object;
+			return sysUserActive.getSysUser();
+		}
+		return null;
 	}
 
 	protected SysUser getUser(SysUserService sysUserService) {

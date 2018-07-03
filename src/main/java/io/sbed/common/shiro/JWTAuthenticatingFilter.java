@@ -41,7 +41,6 @@ public class JWTAuthenticatingFilter extends AuthenticatingFilter {
     }
 
     /**
-     *
      * @param request
      * @param response
      * @return true：继续执行其他拦截器，false：自己已经处理完成了
@@ -67,16 +66,16 @@ public class JWTAuthenticatingFilter extends AuthenticatingFilter {
                     RedisUtils.delete(Constant.prefix.CAPTCHA_TEXT + captchaT);
                 }
                 if (!captcha.equalsIgnoreCase(kaptcha)) {
-                    return this.onLoginFailure(null,new CaptchaException(),request,response);
+                    return this.onLoginFailure(null, new CaptchaException(), request, response);
                 }
             }
             return executeLogin(request, response);
-        }else{
-            if(!executeLogin(request, response)){
+        } else {
+            if (!executeLogin(request, response)) {
                 //转发到登录
-                request.getRequestDispatcher(getLoginUrl()).forward(request,response);
+                request.getRequestDispatcher(getLoginUrl()).forward(request, response);
                 return false;
-            }else{
+            } else {
                 return true;
             }
         }
@@ -96,8 +95,13 @@ public class JWTAuthenticatingFilter extends AuthenticatingFilter {
         log.debug("Authentication exception", e);
         String className = e.getClass().getName();
         request.setAttribute(FormAuthenticationFilter.DEFAULT_ERROR_KEY_ATTRIBUTE_NAME, className);
-        //login failed, let request continue back to the login page:
-        return false;
+        if (isLoginRequest(request, response)) {
+            //login failed, let request continue back to the login page:
+            return true;
+        } else {
+            //forward to the login page:
+            return false;
+        }
     }
 
 

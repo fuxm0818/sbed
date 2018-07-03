@@ -44,7 +44,7 @@ public class ShiroConfig {
 
     @Bean
     public SecurityManager securityManager(@Qualifier("sessionManager") SessionManager sessionManager,
-                                           @Qualifier("myShiroRealm") ShiroRealm realm,
+                                           @Qualifier("shiroRealm") ShiroRealm shiroRealm,
                                            @Qualifier("redisCacheManager") RedisCacheManager redisCacheManager,
                                            @Qualifier("subjectFactory") SubjectFactory subjectFactory
     ) {
@@ -52,7 +52,7 @@ public class ShiroConfig {
         //注入缓存管理器
         securityManager.setCacheManager(redisCacheManager);
         // 设置realm.
-        securityManager.setRealm(realm);
+        securityManager.setRealm(shiroRealm);
 //        // 关闭shiro自带的session
         DefaultSubjectDAO subjectDAO = new DefaultSubjectDAO();
         DefaultSessionStorageEvaluator defaultSessionStorageEvaluator = new DefaultSessionStorageEvaluator();
@@ -145,17 +145,17 @@ public class ShiroConfig {
     /**
      * 身份认证realm; (这个需要自己写，账号密码校验；权限等)
      */
-    @Bean(name = "myShiroRealm")
-    public ShiroRealm myShiroRealm(@Qualifier("credentialsMatcher") CredentialsMatcher matcher,
+    @Bean(name = "shiroRealm")
+    public ShiroRealm shiroRealm(@Qualifier("credentialsMatcher") CredentialsMatcher matcher,
                                    @Qualifier("redisCacheManager") RedisCacheManager redisCacheManager
     ) {
-        ShiroRealm myShiroRealm = new ShiroRealm();
-        myShiroRealm.setCredentialsMatcher(matcher);
-        myShiroRealm.setCacheManager(redisCacheManager);
-        myShiroRealm.setCachingEnabled(true);
-        myShiroRealm.setAuthenticationCachingEnabled(true);
-        myShiroRealm.setAuthorizationCachingEnabled(true);
-        return myShiroRealm;
+        ShiroRealm shiroRealm = new ShiroRealm();
+        shiroRealm.setCredentialsMatcher(matcher);
+        shiroRealm.setCacheManager(redisCacheManager);
+        shiroRealm.setCachingEnabled(true);
+        shiroRealm.setAuthenticationCachingEnabled(true);
+        shiroRealm.setAuthorizationCachingEnabled(true);
+        return shiroRealm;
     }
 
     @Bean(name = "subjectFactory")
@@ -177,39 +177,11 @@ public class ShiroConfig {
         return authorizationAttributeSourceAdvisor;
     }
 
-    /**
-     * shiro缓存管理器;
-     * 需要注入对应的其它的实体类中：
-     * 1、安全管理器：securityManager
-     * 可见securityManager是整个shiro的核心；
-     *
-     * @return
-     */
-//    @Bean
-//    public EhCacheManager ehCacheManager() {
-//        EhCacheManager cacheManager = new EhCacheManager();
-//        cacheManager.setCacheManagerConfigFile("classpath:ehcache.xml");
-//        return cacheManager;
-//    }
-//    @Bean(name = "redisCacheManager")
-//    public ShiroRedisCacheManager redisCacheManager() {
-//        ShiroRedisCacheManager redisCacheManager = new ShiroRedisCacheManager();
-//        return redisCacheManager;
-//    }
-
     @Bean(name = "redisCacheManager")
     public RedisCacheManager redisCacheManager() {
         RedisCacheManager redisCacheManager = new RedisCacheManager();
         return redisCacheManager;
     }
-
-//    //配置自定义的权限登录器
-//    @Bean(name="shiroRealm")
-//    public ShiroRealm shiroRealm(@Qualifier("credentialsMatcher") CredentialsMatcher matcher) {
-//        ShiroRealm shiroRealm=new ShiroRealm();
-//        shiroRealm.setCredentialsMatcher(matcher);
-//        return shiroRealm;
-//    }
 
     //配置自定义的密码比较器
     @Bean(name = "credentialsMatcher")

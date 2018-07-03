@@ -14,7 +14,8 @@ import java.util.List;
  * @date 2017-6-23 15:07
  */
 public class SysUser implements Serializable {
-	
+
+	private static final long serialVersionUID = -6177404270331775360L;
 	/**
 	 * 用户ID
 	 */
@@ -237,4 +238,23 @@ public class SysUser implements Serializable {
 		this.deptName = deptName;
 	}
 
+
+    @Override
+    public String toString() {
+        return "SysUser{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", password='" + password + '\'' +
+                ", salt='" + salt + '\'' +
+                ", email='" + email + '\'' +
+                ", mobile='" + mobile + '\'' +
+                ", status=" + status +
+                ", roleIdList=" + roleIdList +
+                ", createUserId=" + createUserId +
+                ", createTime=" + createTime +
+                ", deptId=" + deptId +
+                ", deptName='" + deptName + '\'' +
+                '}';
+    }
 }

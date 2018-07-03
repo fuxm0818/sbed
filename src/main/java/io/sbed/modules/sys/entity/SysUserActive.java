@@ -13,9 +13,11 @@ import java.io.Serializable;
 public class SysUserActive implements Serializable {
 
 
+    private static final long serialVersionUID = 7637115479953903208L;
 
     private long lastActiveTime;
     private String token;
+    private String username;
     private SysUser sysUser;
 
     public long getLastActiveTime() {
@@ -40,5 +42,18 @@ public class SysUserActive implements Serializable {
 
     public void setSysUser(SysUser sysUser) {
         this.sysUser = sysUser;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    @Override
+    public String toString() {
+        return this.username;
     }
 }
