@@ -23,17 +23,17 @@ public class RedisUtils {
 //    private static boolean open;
 
 //    @Autowired
-    private static RedisTemplate<String, Object> redisTemplate;
+    private static RedisTemplate<Object, Object> redisTemplate;
 //    @Autowired
-    private static ValueOperations<String, String> valueOperations;
+    private static ValueOperations<Object, Object> valueOperations;
 //    @Autowired
-    private static HashOperations<String, String, Object> hashOperations;
+    private static HashOperations<Object, Object, Object> hashOperations;
 //    @Autowired
-    private static ListOperations<String, Object> listOperations;
+    private static ListOperations<Object, Object> listOperations;
 //    @Autowired
-    private static SetOperations<String, Object> setOperations;
+    private static SetOperations<Object, Object> setOperations;
 //    @Autowired
-    private static ZSetOperations<String, Object> zSetOperations;
+    private static ZSetOperations<Object, Object> zSetOperations;
 
     /**  不设置过期时长 */
     public final static long NOT_EXPIRE = -1;
@@ -72,7 +72,7 @@ public class RedisUtils {
 //            return null;
 //        }
 
-        String value = valueOperations.get(key);
+        String value = (String)valueOperations.get(key);
         if(expire != NOT_EXPIRE){
             redisTemplate.expire(key, expire, TimeUnit.SECONDS);
         }
@@ -92,7 +92,7 @@ public class RedisUtils {
 //            return null;
 //        }
 
-        String value = valueOperations.get(key);
+        String value = (String)valueOperations.get(key);
         if(expire != NOT_EXPIRE){
             redisTemplate.expire(key, expire, TimeUnit.SECONDS);
         }
@@ -132,7 +132,7 @@ public class RedisUtils {
 //            return;
 //        }
 
-        Set<String> keys = redisTemplate.keys(pattern);
+        Set<Object> keys = redisTemplate.keys(pattern);
         if (keys.size() > 0) {
             redisTemplate.delete(keys);
         }
@@ -169,32 +169,32 @@ public class RedisUtils {
 
     @Autowired
     @Qualifier("redisTemplate")
-    public void setRedisTemplate(RedisTemplate<String, Object> redisTemplate) {
+    public void setRedisTemplate(RedisTemplate<Object, Object> redisTemplate) {
         RedisUtils.redisTemplate = redisTemplate;
     }
     @Autowired
     @Qualifier("valueOperations")
-    public void setValueOperations(ValueOperations<String, String> valueOperations) {
+    public void setValueOperations(ValueOperations<Object, Object> valueOperations) {
         RedisUtils.valueOperations = valueOperations;
     }
     @Autowired
     @Qualifier("hashOperations")
-    public void setHashOperations(HashOperations<String, String, Object> hashOperations) {
+    public void setHashOperations(HashOperations<Object, Object, Object> hashOperations) {
         RedisUtils.hashOperations = hashOperations;
     }
     @Autowired
     @Qualifier("listOperations")
-    public void setListOperations(ListOperations<String, Object> listOperations) {
+    public void setListOperations(ListOperations<Object, Object> listOperations) {
         RedisUtils.listOperations = listOperations;
     }
     @Autowired
     @Qualifier("setOperations")
-    public void setSetOperations(SetOperations<String, Object> setOperations) {
+    public void setSetOperations(SetOperations<Object, Object> setOperations) {
         RedisUtils.setOperations = setOperations;
     }
     @Autowired
     @Qualifier("zSetOperations")
-    public void setzSetOperations(ZSetOperations<String, Object> zSetOperations) {
+    public void setzSetOperations(ZSetOperations<Object, Object> zSetOperations) {
         RedisUtils.zSetOperations = zSetOperations;
     }
 }

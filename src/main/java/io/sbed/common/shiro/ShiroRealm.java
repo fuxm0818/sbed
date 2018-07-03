@@ -19,6 +19,8 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -55,14 +57,26 @@ public class ShiroRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) throws AuthenticationException {
         log.info("认证配置-->MyShiroRealm.doGetAuthenticationInfo()");
-        JWTToken jwtToken = (JWTToken)auth;
+        JWTToken jwtToken = (JWTToken) auth;
         SysUserActive sysUserActive = null;
-        if(jwtToken.isLoginRequest()){
-             sysUserActive = this.toLogin(auth);
-        }else{
+        if (jwtToken.isLoginRequest()) {
+            sysUserActive = this.toLogin(auth);
+        } else {
             sysUserActive = this.toCheckToken(jwtToken);
         }
-        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(sysUserActive, sysUserActive.getSysUser().getPassword(), getName());
+        SysUser user = sysUserActive.getSysUser();
+
+        List<Object> principals=new ArrayList<Object>();
+        principals.add(user.getUsername());
+        principals.add(user);
+
+        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(principals, sysUserActive.getSysUser().getPassword(), getName());
+//        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(
+//                user.getUsername(), //用户名
+//                user.getPassword(), //密码
+//                ByteSourceUtils.bytes(user.getSalt()),//salt
+//                getName()  //realm name );
+//        );
         return info;
     }
 
@@ -98,14 +112,18 @@ public class ShiroRealm extends AuthorizingRealm {
         return sysUserActive;
     }
 
-    private SysUserActive toCheckToken(JWTToken jwtToken){
+    private SysUserActive toCheckToken(JWTToken jwtToken) {
         String tokenInHeader = jwtToken.getToken();
+        if (StringUtils.isBlank(tokenInHeader)) {
+            log.error("token为空，无效异常");
+            throw new AuthenticationException();
+        }
 
         // 解密获得username，用于和数据库进行对比
         String usernameInToken = JWTUtil.getUsername(tokenInHeader);
         SysUserActive sysUserActive = RedisUtils.get(Constant.prefix.SYSUSER_USERNAME + usernameInToken, SysUserActive.class);
         if (null == sysUserActive || StringUtils.isBlank(sysUserActive.getToken()) || !tokenInHeader.equalsIgnoreCase(sysUserActive.getToken())) {
-            log.error("token无效");
+            log.error("token不存在，无效异常");
             throw new AuthenticationException();
         } else {
             //token超时
@@ -114,7 +132,7 @@ public class ShiroRealm extends AuthorizingRealm {
                 log.error("token超时失效,凭证过期");
                 throw new ExpiredCredentialsException();
             }
-            if(JWTUtil.verify(tokenInHeader,sysUserActive.getSysUser().getUsername(),sysUserActive.getSysUser().getSalt())){
+            if (!JWTUtil.verify(tokenInHeader, sysUserActive.getSysUser().getUsername(), sysUserActive.getSysUser().getSalt())) {
                 log.error("token校验无效");
                 throw new JWTVerificationException("token校验无效");
             }

@@ -12,6 +12,8 @@ import java.io.Serializable;
  */
 public class SysUserActive implements Serializable {
 
+
+
     private long lastActiveTime;
     private String token;
     private SysUser sysUser;

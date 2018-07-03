@@ -54,7 +54,7 @@ public class PasswordGenerateUtils {
 //		for (int i = 0; i < 5; i++) {
 //			System.out.println(generatePassword());
 //		}
-		String str = "123456";
+		String str = "admin";
 		MessageDigest md5= null;
 		try {
 			String password = MD5password(str);

@@ -21,6 +21,9 @@ public class CredentialsMatcher extends SimpleCredentialsMatcher {
         if(!utoken.isLoginRequest()){
             return true;
         }
+//        //密码错误,使用密码当做加密的盐
+//        return info.getCredentials().equals(new Sha256Hash(utoken.getCredentials(), ((SimpleAuthenticationInfo) info).getCredentialsSalt()).toHex());
+
         SysUserActive sysUserActive = (SysUserActive) info.getPrincipals().getPrimaryPrincipal();
         //密码错误,使用密码当做加密的盐
         return sysUserActive.getSysUser().getPassword().equals(new Sha256Hash(utoken.getCredentials(), sysUserActive.getSysUser().getSalt()).toHex());

@@ -45,7 +45,7 @@ public class ShiroConfig {
     @Bean
     public SecurityManager securityManager(@Qualifier("sessionManager") SessionManager sessionManager,
                                            @Qualifier("myShiroRealm") ShiroRealm realm,
-                                           @Qualifier("redisCacheManager") ShiroRedisCacheManager redisCacheManager,
+                                           @Qualifier("redisCacheManager") RedisCacheManager redisCacheManager,
                                            @Qualifier("subjectFactory") SubjectFactory subjectFactory
     ) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
@@ -90,6 +90,8 @@ public class ShiroConfig {
 
         //登录
         shiroFilterFactoryBean.setLoginUrl("/sys/login");
+        //TODO 未认证还没有开发
+//        shiroFilterFactoryBean.setUnauthorizedUrl("/401");
 
         // 拦截器
         Map<String, String> filterMap = new LinkedHashMap<String, String>();
@@ -144,11 +146,15 @@ public class ShiroConfig {
      * 身份认证realm; (这个需要自己写，账号密码校验；权限等)
      */
     @Bean(name = "myShiroRealm")
-    public ShiroRealm myShiroRealm(@Qualifier("credentialsMatcher") CredentialsMatcher matcher) {
+    public ShiroRealm myShiroRealm(@Qualifier("credentialsMatcher") CredentialsMatcher matcher,
+                                   @Qualifier("redisCacheManager") RedisCacheManager redisCacheManager
+    ) {
         ShiroRealm myShiroRealm = new ShiroRealm();
         myShiroRealm.setCredentialsMatcher(matcher);
-        myShiroRealm.setAuthenticationCachingEnabled(true);
+        myShiroRealm.setCacheManager(redisCacheManager);
         myShiroRealm.setCachingEnabled(true);
+        myShiroRealm.setAuthenticationCachingEnabled(true);
+        myShiroRealm.setAuthorizationCachingEnabled(true);
         return myShiroRealm;
     }
 
@@ -185,9 +191,15 @@ public class ShiroConfig {
 //        cacheManager.setCacheManagerConfigFile("classpath:ehcache.xml");
 //        return cacheManager;
 //    }
+//    @Bean(name = "redisCacheManager")
+//    public ShiroRedisCacheManager redisCacheManager() {
+//        ShiroRedisCacheManager redisCacheManager = new ShiroRedisCacheManager();
+//        return redisCacheManager;
+//    }
+
     @Bean(name = "redisCacheManager")
-    public ShiroRedisCacheManager redisCacheManager() {
-        ShiroRedisCacheManager redisCacheManager = new ShiroRedisCacheManager();
+    public RedisCacheManager redisCacheManager() {
+        RedisCacheManager redisCacheManager = new RedisCacheManager();
         return redisCacheManager;
     }
 
@@ -204,6 +216,5 @@ public class ShiroConfig {
     public CredentialsMatcher credentialsMatcher() {
         return new CredentialsMatcher();
     }
-
 
 }

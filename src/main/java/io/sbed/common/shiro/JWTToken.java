@@ -1,5 +1,7 @@
 package io.sbed.common.shiro;
 
+import io.sbed.common.utils.JWTUtil;
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authc.AuthenticationToken;
 
 /**
@@ -32,7 +34,7 @@ public class JWTToken implements AuthenticationToken {
 
     @Override
     public Object getPrincipal() {
-        return this.username;
+        return StringUtils.isNotBlank(this.username) ? this.username : JWTUtil.getUsername(this.token);
     }
 
     @Override

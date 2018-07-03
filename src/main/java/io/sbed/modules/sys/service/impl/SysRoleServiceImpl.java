@@ -1,5 +1,6 @@
 package io.sbed.modules.sys.service.impl;
 
+import io.sbed.common.shiro.ShiroRealm;
 import io.sbed.modules.sys.dao.SysRoleDao;
 import io.sbed.modules.sys.entity.SysRole;
 import io.sbed.modules.sys.service.SysRoleMenuService;
