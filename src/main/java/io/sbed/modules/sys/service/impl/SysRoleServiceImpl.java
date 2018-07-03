@@ -1,6 +1,5 @@
 package io.sbed.modules.sys.service.impl;
 
-import io.sbed.common.shiro.ShiroRealm;
 import io.sbed.modules.sys.dao.SysRoleDao;
 import io.sbed.modules.sys.entity.SysRole;
 import io.sbed.modules.sys.service.SysRoleMenuService;
@@ -55,6 +54,7 @@ public class SysRoleServiceImpl implements SysRoleService {
 		sysRoleDao.save(role);
 		//保存角色与菜单关系
 		sysRoleMenuService.saveOrUpdate(role.getId(), role.getMenuIdList());
+		//清除缓存
 		shiroRealm.clearCached();
 	}
 
@@ -64,6 +64,7 @@ public class SysRoleServiceImpl implements SysRoleService {
 		sysRoleDao.update(role);
 		//更新角色与菜单关系
 		sysRoleMenuService.saveOrUpdate(role.getId(), role.getMenuIdList());
+		//清除缓存
 		shiroRealm.clearCached();
 	}
 
@@ -73,6 +74,8 @@ public class SysRoleServiceImpl implements SysRoleService {
 		sysRoleDao.deleteBatch(ids);
 		//删除角色与菜单关系
 		sysRoleMenuService.deleteBatch(ids);
+		//清除缓存
+		shiroRealm.clearCached();
 	}
 
 }

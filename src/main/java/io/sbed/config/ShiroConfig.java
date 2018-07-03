@@ -147,6 +147,8 @@ public class ShiroConfig {
     public ShiroRealm myShiroRealm(@Qualifier("credentialsMatcher") CredentialsMatcher matcher) {
         ShiroRealm myShiroRealm = new ShiroRealm();
         myShiroRealm.setCredentialsMatcher(matcher);
+        myShiroRealm.setAuthenticationCachingEnabled(true);
+        myShiroRealm.setCachingEnabled(true);
         return myShiroRealm;
     }
 

@@ -66,68 +66,6 @@ public class SysLoginController extends AbstractController {
         return Result.ok().put("errorTimes", errorTimes);
     }
 
-//    /**
-//     * 登录
-//     */
-//    @RequestMapping(value = "/sys/login", method = RequestMethod.POST)
-//    public Result login(String username, String password, String captcha, String captchaT) throws IOException {
-//        Object _login_errors = 3;
-//        //redis中获取登录错误次数
-//        _login_errors = NumberUtils.toInt(RedisUtils.get(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT), 0);
-//        if (_login_errors == null) {
-//            _login_errors = 3;
-//        }
-//        long errorTimes = Long.valueOf(_login_errors.toString());
-//
-//        //用户信息
-//        SysUser user = sysUserService.queryByUserName(username);
-//
-//        //账号不存在
-//        if (user == null) {
-//            //redis中获取登录错误次数
-//            RedisUtils.set(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT, ++errorTimes, Constant.Time.Second.MINUTE_5);
-//            return Result.error("用户名或密码错误").put("errorTimes", errorTimes);
-//        }
-//
-//        //密码错误,使用密码当做加密的盐
-//        if (!user.getPassword().equals(new Sha256Hash(password, user.getSalt()).toHex())) {
-//            //redis中获取登录错误次数
-//            RedisUtils.set(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT, ++errorTimes, Constant.Time.Second.MINUTE_5);
-//            return Result.error("用户名或密码错误").put("errorTimes", errorTimes);
-//        }
-//
-//        //验证码
-//        String kaptcha = getKaptcha(captchaT);
-//        if (errorTimes >= 3) {
-//            if (!captcha.equalsIgnoreCase(kaptcha)) {
-//                // redis中获取登录错误次数
-//                RedisUtils.set(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT, ++errorTimes, Constant.Time.Second.MINUTE_5);
-//                return Result.error("验证码错误").put("errorTimes", errorTimes);
-//            }
-//        }
-//
-//        //账号锁定
-//        if (Constant.UserStatus.DISABLE.getValue() == user.getStatus()) {
-//            // redis中获取登录错误次数
-//            RedisUtils.set(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT, ++errorTimes, Constant.Time.Second.MINUTE_5);
-//            return Result.error("账号已被锁定,请联系管理员").put("errorTimes", errorTimes);
-//        }
-//
-//        //生成token
-//        String token = JWTUtil.sign(user.getUsername() + "", user.getPassword() + "");
-//
-//        //保存到数据库redis
-//        SysUserActive sysUserActive = new SysUserActive();
-//        sysUserActive.setToken(token);
-//        sysUserActive.setLastActiveTime(System.currentTimeMillis());
-//        RedisUtils.set(Constant.prefix.SYSUSER_USERNAME + user.getUsername(), sysUserActive);
-//
-//        Map<String, Object> result = new HashMap<>();
-//        result.put(Constant.TOKEN_IN_HEADER, token);
-//        Result r = Result.ok().put(result);
-//        return r;
-//    }
-
 
     @RequestMapping(value = "/sys/login")
     public Result login(HttpServletRequest request, String captchaT) throws Exception {
@@ -150,7 +88,7 @@ public class SysLoginController extends AbstractController {
                 throw new AuthenticationException();
             } else if (CaptchaException.class.getName().equals(exceptionClassName)) {
                 throw new CaptchaException();
-            }else if (ExpiredCredentialsException.class.getName().equals(exceptionClassName)) {
+            } else if (ExpiredCredentialsException.class.getName().equals(exceptionClassName)) {
                 throw new ExpiredCredentialsException();
             }else if (JWTVerificationException.class.getName().equals(exceptionClassName)) {
                 throw new JWTVerificationException("token校验无效");
@@ -159,7 +97,7 @@ public class SysLoginController extends AbstractController {
             }
         }
 
-//        //获取token放入result中
+        //获取token放入result中
         SysUserActive sysUserActive = (SysUserActive) SecurityUtils.getSubject().getPrincipals().getPrimaryPrincipal();
         result.put(Constant.TOKEN_IN_HEADER, sysUserActive.getToken());
 
@@ -168,17 +106,5 @@ public class SysLoginController extends AbstractController {
         Result r = Result.ok().put(result);
         return r;
     }
-
-//    /**
-//     * 从session中获取记录的验证码
-//     */
-//    private String getKaptcha(String captchaT) {
-//        String kaptcha = RedisUtils.get(Constant.prefix.CAPTCHA_TEXT + captchaT);
-//        if (StringUtils.isBlank(kaptcha)) {
-//            throw new SbedException("验证码已失效");
-//        }
-//        RedisUtils.delete(Constant.prefix.CAPTCHA_TEXT + captchaT);
-//        return kaptcha;
-//    }
 
 }

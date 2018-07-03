@@ -68,7 +68,7 @@ public class SysUserServiceImpl implements SysUserService {
 	public void save(SysUser user) {
 		user.setCreateTime(new Date());
 		//sha256加密
-		user.setPassword(new Sha256Hash(user.getPassword(), user.getPassword()).toHex());
+		user.setPassword(new Sha256Hash(user.getPassword(), user.getSalt()).toHex());
 		sysUserDao.save(user);
 
 		//保存用户与角色关系
@@ -83,7 +83,7 @@ public class SysUserServiceImpl implements SysUserService {
 		if(StringUtils.isBlank(user.getPassword())){
 			user.setPassword(null);
 		}else{
-			user.setPassword(new Sha256Hash(user.getPassword(), user.getPassword()).toHex());
+			user.setPassword(new Sha256Hash(user.getPassword(), user.getSalt()).toHex());
 		}
 		sysUserDao.update(user);
 		
