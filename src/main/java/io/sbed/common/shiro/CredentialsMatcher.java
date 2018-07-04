@@ -5,6 +5,7 @@ import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
 import org.apache.shiro.crypto.hash.Sha256Hash;
+import org.springframework.stereotype.Component;
 
 /**
  * Description: 凭证匹配器，验证密码 <br>
@@ -13,6 +14,7 @@ import org.apache.shiro.crypto.hash.Sha256Hash;
  * @author fuxiangming
  * @date 2018/6/14 下午4:09
  */
+@Component
 public class CredentialsMatcher extends SimpleCredentialsMatcher {
 
     @Override
@@ -21,11 +23,10 @@ public class CredentialsMatcher extends SimpleCredentialsMatcher {
         if(!utoken.isLoginRequest()){
             return true;
         }
-//        //密码错误,使用密码当做加密的盐
+        //密码错误,使用密码当做加密的盐
 //        return info.getCredentials().equals(new Sha256Hash(utoken.getCredentials(), ((SimpleAuthenticationInfo) info).getCredentialsSalt()).toHex());
 
         SysUserActive sysUserActive = (SysUserActive) info.getPrincipals().getPrimaryPrincipal();
-        //密码错误,使用密码当做加密的盐
         return sysUserActive.getSysUser().getPassword().equals(new Sha256Hash(utoken.getCredentials(), sysUserActive.getSysUser().getSalt()).toHex());
     }
 

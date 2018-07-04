@@ -11,7 +11,7 @@
 			</if>
 		</where>
 	</select>
- 
+
 	<insert id="save">
 		insert into sys_user_role
 		(
@@ -40,6 +40,12 @@
 	
 	<select id="queryRoleIdList" resultType="long">
 		select role_id from sys_user_role where user_id = #{value}
+	</select>
+
+	<select id="queryUserList" resultType="io.sbed.modules.sys.entity.SysUser">
+		select su.* from sys_user_role sur
+		join sys_user su on sur.user_id = su.id
+		where sur.role_id = #{roleId}
 	</select>
 
 </mapper>

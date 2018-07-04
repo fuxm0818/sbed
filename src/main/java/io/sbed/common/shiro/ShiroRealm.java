@@ -10,10 +10,10 @@ import io.sbed.modules.sys.service.SysUserService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.cache.Cache;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +62,7 @@ public class ShiroRealm extends AuthorizingRealm {
         } else {
             sysUserActive = this.toCheckToken(jwtToken);
         }
-//        SysUser user = sysUserActive.getSysUser();
+        SysUser user = sysUserActive.getSysUser();
 //
 //        List<Object> principals=new ArrayList<Object>();
 //        principals.add(user.getUsername());
@@ -106,7 +106,7 @@ public class ShiroRealm extends AuthorizingRealm {
         RedisUtils.set(Constant.prefix.SYSUSER_USERNAME + user.getUsername(), sysUserActive);
 
         //用户登录后,清除用户缓存,以便重新加载用户权限
-//        clearAuthorizationInfoCache(user);
+        clearAuthorizationInfoCache(user);
 
         return sysUserActive;
     }
@@ -194,22 +194,17 @@ public class ShiroRealm extends AuthorizingRealm {
 //            cache.clear();
 //        }
 //    }
-//
-//    /**
-//     * 清除指定用户的缓存
-//     *
-//     * @param user
-//     */
-//    private void clearAuthorizationInfoCache(SysUser user) {
-//        Cache<Object, AuthorizationInfo> cache = getAuthorizationCache();
-//        //key必须是String类型，参考ShiroRedisCache类
-//        cache.remove(user.getId() + "");
-//    }
 
-    // 清除缓存(修改权限后调用此方法)
-    public void clearCached() {
-        PrincipalCollection principals = SecurityUtils.getSubject().getPrincipals();
-        super.clearCache(principals);
+    /**
+     * 清除指定用户的缓存
+     *
+     * @param user
+     */
+    public void clearAuthorizationInfoCache(SysUser user) {
+        Cache<Object, AuthorizationInfo> cache = getAuthorizationCache();
+        //key必须是String类型，参考ShiroRedisCache类
+        cache.remove(user.getUsername() + "");
     }
+
 
 }

@@ -2,7 +2,10 @@ package io.sbed.modules.sys.service.impl;
 
 import io.sbed.common.shiro.ShiroRealm;
 import io.sbed.modules.sys.dao.SysRoleDao;
+import io.sbed.modules.sys.dao.SysUserDao;
+import io.sbed.modules.sys.dao.SysUserRoleDao;
 import io.sbed.modules.sys.entity.SysRole;
+import io.sbed.modules.sys.entity.SysUser;
 import io.sbed.modules.sys.service.SysRoleMenuService;
 import io.sbed.modules.sys.service.SysRoleService;
 import io.sbed.modules.sys.service.SysUserRoleService;
@@ -33,6 +36,12 @@ public class SysRoleServiceImpl implements SysRoleService {
 	@Autowired
 	private ShiroRealm shiroRealm;
 
+	@Autowired
+	private SysUserRoleDao sysUserRoleDao;
+
+	@Autowired
+	private SysUserDao sysUserDao;
+
 	@Override
 	public SysRole queryObject(Long id) {
 		return sysRoleDao.queryObject(id);
@@ -55,8 +64,8 @@ public class SysRoleServiceImpl implements SysRoleService {
 		sysRoleDao.save(role);
 		//保存角色与菜单关系
 		sysRoleMenuService.saveOrUpdate(role.getId(), role.getMenuIdList());
-		//清除缓存
-		shiroRealm.clearCached();
+		//清除权限缓存
+		this.clearCachedAuthz(role.getId());
 	}
 
 	@Override
@@ -65,18 +74,31 @@ public class SysRoleServiceImpl implements SysRoleService {
 		sysRoleDao.update(role);
 		//更新角色与菜单关系
 		sysRoleMenuService.saveOrUpdate(role.getId(), role.getMenuIdList());
-		//清除缓存
-		shiroRealm.clearCached();
+		//清除权限缓存
+		this.clearCachedAuthz(role.getId());
 	}
 
 	@Override
 	@Transactional
-	public void deleteBatch(Long[] ids) {
-		sysRoleDao.deleteBatch(ids);
+	public void deleteBatch(Long[] userIds) {
+		sysRoleDao.deleteBatch(userIds);
 		//删除角色与菜单关系
-		sysRoleMenuService.deleteBatch(ids);
-		//清除缓存
-		shiroRealm.clearCached();
+		sysRoleMenuService.deleteBatch(userIds);
+		//清除权限缓存
+		for(long id : userIds){
+			SysUser user = sysUserDao.queryObject(id);
+			if(null != user){
+				shiroRealm.clearAuthorizationInfoCache(user);
+			}
+		}
+	}
+
+	public void clearCachedAuthz(long roleId){
+		List<SysUser> users  = sysUserRoleDao.queryUserList(roleId);
+		for(SysUser user : users){
+			shiroRealm.clearAuthorizationInfoCache(user);
+		}
+
 	}
 
 }

@@ -158,11 +158,11 @@ public class ShiroConfig {
         return shiroRealm;
     }
 
-    @Bean(name = "subjectFactory")
-    public SubjectFactory subjectFactory() {
-        SubjectFactory subjectFactory = new StatelessDefaultSubjectFactory();
-        return subjectFactory;
-    }
+//    @Bean(name = "subjectFactory")
+//    public SubjectFactory subjectFactory() {
+//        SubjectFactory subjectFactory = new StatelessDefaultSubjectFactory();
+//        return subjectFactory;
+//    }
 
     /**
      * 开启shiro aop注解支持. 使用代理方式; 所以需要开启代码支持;
@@ -177,16 +177,16 @@ public class ShiroConfig {
         return authorizationAttributeSourceAdvisor;
     }
 
-    @Bean(name = "redisCacheManager")
-    public RedisCacheManager redisCacheManager() {
-        RedisCacheManager redisCacheManager = new RedisCacheManager();
-        return redisCacheManager;
-    }
+//    @Bean(name = "redisCacheManager")
+//    public RedisCacheManager redisCacheManager() {
+//        RedisCacheManager redisCacheManager = new RedisCacheManager();
+//        return redisCacheManager;
+//    }
 
-    //配置自定义的密码比较器
-    @Bean(name = "credentialsMatcher")
-    public CredentialsMatcher credentialsMatcher() {
-        return new CredentialsMatcher();
-    }
+//    //配置自定义的密码比较器
+//    @Bean(name = "credentialsMatcher")
+//    public CredentialsMatcher credentialsMatcher() {
+//        return new CredentialsMatcher();
+//    }
 
 }
