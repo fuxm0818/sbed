@@ -132,12 +132,14 @@ public class Constant {
 
     public class Time{
         public class Second{
+            public static final int MINUTE_1 = 60 * 1;
             public static final int MINUTE_5 = 60 * 5;
-            public final static long day_1 = 60 * 60 * 24;
+            public final static int hour_1 = 60 * 60 * 1;
+            public final static int day_1 = 60 * 60 * 24;
         }
         public class Millisecond{
-            public static final long MINUTE_30 = 1000 * 60 * 30;
-            public final static long day_1 = 24 * 60 * 60 * 1000;
+            public static final int MINUTE_30 = 1000 * 60 * 30;
+            public final static int day_1 = 24 * 60 * 60 * 1000;
         }
     }
 

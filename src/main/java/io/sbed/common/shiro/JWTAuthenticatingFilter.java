@@ -2,7 +2,8 @@ package io.sbed.common.shiro;
 
 import io.sbed.common.Constant;
 import io.sbed.common.cache.RedisUtils;
-import io.sbed.common.exception.CaptchaException;
+import io.sbed.common.exception.CaptchaErrorException;
+import io.sbed.common.exception.CaptchaExpireException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.logging.Log;
@@ -61,12 +62,14 @@ public class JWTAuthenticatingFilter extends AuthenticatingFilter {
             long errorTimes = Long.valueOf(_login_errors.toString());
             //验证码
             if (errorTimes >= 3) {
-                String kaptcha = RedisUtils.get(Constant.prefix.CAPTCHA_TEXT + captchaT);
-                if (StringUtils.isNotBlank(kaptcha)) {
+                String aptchaInCache = RedisUtils.get(Constant.prefix.CAPTCHA_TEXT + captchaT);
+                if (StringUtils.isNotBlank(aptchaInCache)) {
                     RedisUtils.delete(Constant.prefix.CAPTCHA_TEXT + captchaT);
+                }else{
+                    return this.onLoginFailure(null, new CaptchaExpireException(), request, response);
                 }
-                if (!captcha.equalsIgnoreCase(kaptcha)) {
-                    return this.onLoginFailure(null, new CaptchaException(), request, response);
+                if (!captcha.equalsIgnoreCase(aptchaInCache)) {
+                    return this.onLoginFailure(null, new CaptchaErrorException(), request, response);
                 }
             }
             return executeLogin(request, response);

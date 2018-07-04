@@ -28,6 +28,11 @@ public class SysUserActive implements Serializable {
         this.lastActiveTime = lastActiveTime;
     }
 
+    public SysUserActive setLastActiveTimeAndReturn(long lastActiveTime) {
+        this.lastActiveTime = lastActiveTime;
+        return this;
+    }
+
     public String getToken() {
         return token;
     }

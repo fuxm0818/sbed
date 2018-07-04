@@ -42,7 +42,10 @@ $.ajaxSetup({
     complete: function(xhr) {
         //无效的token，则跳转到登录页面
         if(xhr.responseJSON.code == 401){
-            parent.location.href = baseURL + 'admin/login.html';
+            var tologin = baseURL + 'admin/login.html';
+            if(parent.location.href.indexOf(tologin) == -1){
+                parent.location.href = tologin;
+            }
         }
     }
 });

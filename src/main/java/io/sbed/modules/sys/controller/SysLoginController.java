@@ -4,7 +4,8 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.google.code.kaptcha.Producer;
 import io.sbed.common.Constant;
 import io.sbed.common.cache.RedisUtils;
-import io.sbed.common.exception.CaptchaException;
+import io.sbed.common.exception.CaptchaErrorException;
+import io.sbed.common.exception.CaptchaExpireException;
 import io.sbed.common.utils.Result;
 import io.sbed.modules.sys.entity.SysUserActive;
 import io.sbed.modules.sys.service.SysUserService;
@@ -49,7 +50,7 @@ public class SysLoginController extends AbstractController {
         String text = producer.createText();
         //生成图片验证码
         BufferedImage image = producer.createImage(text);
-        //redis中保存（用于其他地方判断是否输入正确）
+        //redis中保存（用于校验验证码是否输入正确）
         RedisUtils.set(Constant.prefix.CAPTCHA_TEXT + captchaT, text, Constant.Time.Second.MINUTE_5);
         ServletOutputStream out = response.getOutputStream();
         ImageIO.write(image, "jpg", out);
@@ -75,7 +76,7 @@ public class SysLoginController extends AbstractController {
         String exceptionClassName = (String) request.getAttribute("shiroLoginFailure");
         if (StringUtils.isNotBlank(exceptionClassName)) {
             long errorTimes = NumberUtils.toInt(RedisUtils.get(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT), 0);
-            RedisUtils.set(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT, ++errorTimes, Constant.Time.Second.MINUTE_5);
+            RedisUtils.set(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT, ++errorTimes, Constant.Time.Second.hour_1);
             if (AuthenticationException.class.getName().equals(exceptionClassName)) {
                 throw new AuthenticationException();
             } else if (UnknownAccountException.class.getName().equals(exceptionClassName)) {
@@ -86,8 +87,10 @@ public class SysLoginController extends AbstractController {
                 throw new LockedAccountException();
             } else if ("tokenError".equals(exceptionClassName)) {
                 throw new AuthenticationException();
-            } else if (CaptchaException.class.getName().equals(exceptionClassName)) {
-                throw new CaptchaException();
+            } else if (CaptchaErrorException.class.getName().equals(exceptionClassName)) {
+                throw new CaptchaErrorException();
+            } else if (CaptchaExpireException.class.getName().equals(exceptionClassName)) {
+                throw new CaptchaExpireException();
             } else if (ExpiredCredentialsException.class.getName().equals(exceptionClassName)) {
                 throw new ExpiredCredentialsException();
             }else if (JWTVerificationException.class.getName().equals(exceptionClassName)) {

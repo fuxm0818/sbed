@@ -1,5 +1,6 @@
 package io.sbed.common.shiro;
 
+import io.sbed.common.Constant;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 import org.apache.shiro.cache.CacheManager;
@@ -38,7 +39,7 @@ public class RedisCacheManager implements CacheManager {
         private static final String REDIS_SHIRO_CACHE = "shiro-cache:";
         private String cacheKey;
         private RedisTemplate<K, V> redisTemplate;
-        private long globExpire = 30;
+        private long globExpire = Constant.Time.Millisecond.MINUTE_30;
 
         @SuppressWarnings("rawtypes")
         public ShiroCache(String name, RedisTemplate client) {
@@ -48,7 +49,7 @@ public class RedisCacheManager implements CacheManager {
 
         @Override
         public V get(K key) throws CacheException {
-            redisTemplate.boundValueOps(getCacheKey(key)).expire(globExpire, TimeUnit.MINUTES);
+            redisTemplate.boundValueOps(getCacheKey(key)).expire(globExpire, TimeUnit.MILLISECONDS);
             return redisTemplate.boundValueOps(getCacheKey(key)).get();
         }
 

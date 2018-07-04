@@ -83,15 +83,12 @@ public class ShiroConfig {
 
         //验证码过滤器
         Map<String, Filter> shiroFilterMap = shiroFilterFactoryBean.getFilters();
-//        shiroFilterMap.put("jwt", new ShiroAuthenticatingFilter());
         shiroFilterMap.put("authc", new JWTAuthenticatingFilter());
         shiroFilterMap.put("logout", new ShiroLogoutFilter());
         shiroFilterFactoryBean.setFilters(shiroFilterMap);
 
         //登录
         shiroFilterFactoryBean.setLoginUrl("/sys/login");
-        //TODO 未认证还没有开发
-//        shiroFilterFactoryBean.setUnauthorizedUrl("/401");
 
         // 拦截器
         Map<String, String> filterMap = new LinkedHashMap<String, String>();
@@ -115,15 +112,12 @@ public class ShiroConfig {
         filterMap.put("/css/**", "anon");
         filterMap.put("/modules/**", "anon");
         filterMap.put("**/*.html", "anon");
-        //登录
-//        filterMap.put("/sys/login", "anon");
         //退出
         filterMap.put("/sys/logout", "logout");
         // 访问401和404页面不通过我们的Filter
         filterMap.put("/401", "anon");
         filterMap.put("/404", "anon");
         // 其他的
-//        filterMap.put("/**", "jwt");
         filterMap.put("/**", "authc");
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterMap);
@@ -158,12 +152,6 @@ public class ShiroConfig {
         return shiroRealm;
     }
 
-//    @Bean(name = "subjectFactory")
-//    public SubjectFactory subjectFactory() {
-//        SubjectFactory subjectFactory = new StatelessDefaultSubjectFactory();
-//        return subjectFactory;
-//    }
-
     /**
      * 开启shiro aop注解支持. 使用代理方式; 所以需要开启代码支持;
      *
@@ -176,17 +164,5 @@ public class ShiroConfig {
         authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
         return authorizationAttributeSourceAdvisor;
     }
-
-//    @Bean(name = "redisCacheManager")
-//    public RedisCacheManager redisCacheManager() {
-//        RedisCacheManager redisCacheManager = new RedisCacheManager();
-//        return redisCacheManager;
-//    }
-
-//    //配置自定义的密码比较器
-//    @Bean(name = "credentialsMatcher")
-//    public CredentialsMatcher credentialsMatcher() {
-//        return new CredentialsMatcher();
-//    }
 
 }

@@ -94,10 +94,17 @@
         },
         computed: {
             captchaT: function () {//计算属性有缓存，只有在它的相关依赖发生改变时才会重新求值，而这里没有依赖值，所以一直不变
-                function S4() {
-                    return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-                };
-                return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+                var _captchaT = localStorage.getItem("captchaT");
+                if(!_captchaT){
+                    function S4() {
+                        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+                    };
+                    _captchaT = (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+                    localStorage.setItem("captchaT",_captchaT);
+                    return _captchaT;
+                }else{
+                    return _captchaT;
+                }
             },
         },
         methods: {
@@ -114,6 +121,7 @@
                     success: function (r) {
                         if (r.code == 0) {//登录成功
                             localStorage.setItem("token", r.token);
+                            localStorage.removeItem("captchaT");
                             parent.location.href = baseURL + 'admin/index.html';
                         } else {
                             vm.error = true;

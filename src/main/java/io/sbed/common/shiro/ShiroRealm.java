@@ -56,30 +56,21 @@ public class ShiroRealm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) throws AuthenticationException {
         log.info("认证配置-->MyShiroRealm.doGetAuthenticationInfo()");
         JWTToken jwtToken = (JWTToken) auth;
-        SysUserActive sysUserActive = null;
-        if (jwtToken.isLoginRequest()) {
-            sysUserActive = this.toLogin(auth);
-        } else {
-            sysUserActive = this.toCheckToken(jwtToken);
-        }
+        SysUserActive sysUserActive = this.toLogin(auth);
         SysUser user = sysUserActive.getSysUser();
-//
-//        List<Object> principals=new ArrayList<Object>();
-//        principals.add(user.getUsername());
-//        principals.add(user);
-
         SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(sysUserActive, sysUserActive.getSysUser().getPassword(), getName());
-//        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(
-//                user.getUsername(), //用户名
-//                user.getPassword(), //密码
-//                ByteSourceUtils.bytes(user.getSalt()),//salt
-//                getName()  //realm name );
-//        );
         return info;
     }
 
     private SysUserActive toLogin(AuthenticationToken auth) {
         String username = (String) auth.getPrincipal();
+        if(StringUtils.isBlank(username)){
+            throw new IncorrectCredentialsException("用户名为空");
+        }
+        String password = (String) auth.getCredentials();
+        if(StringUtils.isBlank(password)){
+            throw new IncorrectCredentialsException("密码为空");
+        }
         //用户信息
         SysUser user = sysUserService.queryByUserName(username);
 
@@ -103,42 +94,11 @@ public class ShiroRealm extends AuthorizingRealm {
         sysUserActive.setLastActiveTime(System.currentTimeMillis());
         sysUserActive.setUsername(username);
         sysUserActive.setSysUser(user);
-        RedisUtils.set(Constant.prefix.SYSUSER_USERNAME + user.getUsername(), sysUserActive);
+//        RedisUtils.set(Constant.prefix.SYSUSER_USERNAME + user.getUsername(), sysUserActive);
 
         //用户登录后,清除用户缓存,以便重新加载用户权限
         clearAuthorizationInfoCache(user);
 
-        return sysUserActive;
-    }
-
-    private SysUserActive toCheckToken(JWTToken jwtToken) {
-        String tokenInHeader = jwtToken.getToken();
-        if (StringUtils.isBlank(tokenInHeader)) {
-            log.error("token为空，无效异常");
-            throw new AuthenticationException();
-        }
-
-        // 解密获得username，用于和数据库进行对比
-        String usernameInToken = JWTUtil.getUsername(tokenInHeader);
-        SysUserActive sysUserActive = RedisUtils.get(Constant.prefix.SYSUSER_USERNAME + usernameInToken, SysUserActive.class);
-        if (null == sysUserActive || StringUtils.isBlank(sysUserActive.getToken()) || !tokenInHeader.equalsIgnoreCase(sysUserActive.getToken())) {
-            log.error("token不存在，无效异常");
-            throw new AuthenticationException();
-        } else {
-            //token超时
-            if (System.currentTimeMillis() > sysUserActive.getLastActiveTime() + Constant.Time.Millisecond.MINUTE_30) {
-                RedisUtils.delete(Constant.prefix.SYSUSER_USERNAME + usernameInToken);
-                log.error("token超时失效,凭证过期");
-                throw new ExpiredCredentialsException();
-            }
-            if (!JWTUtil.verify(tokenInHeader, sysUserActive.getSysUser().getUsername(), sysUserActive.getSysUser().getSalt())) {
-                log.error("token校验无效");
-                throw new JWTVerificationException("token校验无效");
-            }
-        }
-        //最新活动时间
-        sysUserActive.setLastActiveTime(System.currentTimeMillis());
-        RedisUtils.set(Constant.prefix.SYSUSER_USERNAME + sysUserActive.getSysUser().getUsername(), sysUserActive);
         return sysUserActive;
     }
 
@@ -184,17 +144,6 @@ public class ShiroRealm extends AuthorizingRealm {
 
     }
 
-
-//    /**
-//     * 清除所有用户的缓存
-//     */
-//    public void clearAuthorizationInfoCache() {
-//        Cache<Object, AuthorizationInfo> cache = getAuthorizationCache();
-//        if (cache != null) {
-//            cache.clear();
-//        }
-//    }
-
     /**
      * 清除指定用户的缓存
      *
@@ -206,5 +155,44 @@ public class ShiroRealm extends AuthorizingRealm {
         cache.remove(user.getUsername() + "");
     }
 
-
+    @Override
+    protected Object getAuthenticationCacheKey(AuthenticationToken token) {
+        try{
+            if(null == token){
+                return null;
+            }
+            JWTToken jwtToken = (JWTToken)token;
+            if(jwtToken.isLoginRequest() && StringUtils.isNotBlank(jwtToken.getUsername())){
+                //登录，直接返回用户名
+                return token.getPrincipal();
+            }else{
+                //非登录，判断token有效性
+                String tokenInHeader = ((JWTToken) token).getToken();
+                String usernameInToken = JWTUtil.getUsername(jwtToken.getToken());
+                Cache<Object, AuthenticationInfo> cache = getAuthenticationCache();
+                SimpleAuthenticationInfo info = (SimpleAuthenticationInfo) cache.get(usernameInToken);
+                SysUserActive sysUserActive = (SysUserActive) info.getPrincipals().getPrimaryPrincipal();
+                if (null == sysUserActive || StringUtils.isBlank(sysUserActive.getToken()) || !tokenInHeader.equalsIgnoreCase(sysUserActive.getToken())) {
+                    log.error("token不存在，无效异常");
+                    throw new AuthenticationException();
+                } else {
+                    //token超时
+                    if (System.currentTimeMillis() > sysUserActive.getLastActiveTime() + Constant.Time.Millisecond.MINUTE_30) {
+                        RedisUtils.delete(Constant.prefix.SYSUSER_USERNAME + usernameInToken);
+                        log.error("token超时失效,凭证过期");
+                        throw new ExpiredCredentialsException();
+                    }
+                    if (!JWTUtil.verify(tokenInHeader, sysUserActive.getSysUser().getUsername(), sysUserActive.getSysUser().getSalt())) {
+                        log.error("token校验失败");
+                        throw new JWTVerificationException("token校验失败");
+                    }
+                }
+                cache.put(usernameInToken,new SimpleAuthenticationInfo(sysUserActive, sysUserActive.getSysUser().getPassword(), getName()));
+                return token.getPrincipal();
+            }
+        }catch (Exception ex){
+            log.error(ex.getMessage(),ex);
+            return null;
+        }
+    }
 }

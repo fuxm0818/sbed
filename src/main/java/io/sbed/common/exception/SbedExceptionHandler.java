@@ -42,22 +42,28 @@ public class SbedExceptionHandler {
 		return Result.error("没有权限，请联系管理员授权");
 	}
 
-	@ExceptionHandler(CaptchaException.class)
-	public Result handleCaptchaException(CaptchaException e){
+	@ExceptionHandler(CaptchaErrorException.class)
+	public Result handleCaptchaErrorException(CaptchaErrorException e){
 		logger.error(e.getMessage(), e);
 		return Result.error("验证码错误");
+	}
+
+	@ExceptionHandler(CaptchaExpireException.class)
+	public Result handleCaptchaExpireException(CaptchaExpireException e){
+		logger.error(e.getMessage(), e);
+		return Result.error("验证码过期");
 	}
 
 	@ExceptionHandler(UnknownAccountException.class)
 	public Result handleUnknownAccountException(UnknownAccountException e){
 		logger.error(e.getMessage(), e);
-		return Result.error("账号不存在");
+		return Result.error(HttpStatus.SC_UNAUTHORIZED,"账号不存在");
 	}
 
 	@ExceptionHandler(IncorrectCredentialsException.class)
 	public Result handleIncorrectCredentialsException(IncorrectCredentialsException e){
 		logger.error(e.getMessage(), e);
-		return Result.error("用户名/密码错误");
+		return Result.error(HttpStatus.SC_UNAUTHORIZED,"用户名/密码错误");
 	}
 
 	@ExceptionHandler(LockedAccountException.class)

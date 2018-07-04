@@ -18,21 +18,11 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class RedisUtils {
 
-    //是否开启redis缓存  true开启   false关闭
-//    @Value("${spring.redis.open: #{false}}")
-//    private static boolean open;
-
-//    @Autowired
     private static RedisTemplate<Object, Object> redisTemplate;
-//    @Autowired
     private static ValueOperations<Object, Object> valueOperations;
-//    @Autowired
     private static HashOperations<Object, Object, Object> hashOperations;
-//    @Autowired
     private static ListOperations<Object, Object> listOperations;
-//    @Autowired
     private static SetOperations<Object, Object> setOperations;
-//    @Autowired
     private static ZSetOperations<Object, Object> zSetOperations;
 
     /**  不设置过期时长 */
@@ -41,18 +31,10 @@ public class RedisUtils {
     private final static Gson gson = new Gson();
 
     public static boolean exists(String key) {
-//        if(!open){
-//            return false;
-//        }
-
         return redisTemplate.hasKey(key);
     }
 
     public static void set(String key, Object value, long expire){
-//        if(!open){
-//            return;
-//        }
-
         valueOperations.set(key, toJson(value));
         if(expire != NOT_EXPIRE){
             redisTemplate.expire(key, expire, TimeUnit.SECONDS);
@@ -60,18 +42,10 @@ public class RedisUtils {
     }
 
     public static void set(String key, Object value){
-//        if(!open){
-//            return;
-//        }
-
         set(key, value, Constant.Time.Second.day_1);
     }
 
     public static <T> T get(String key, Class<T> clazz, long expire) {
-//        if(!open){
-//            return null;
-//        }
-
         String value = (String)valueOperations.get(key);
         if(expire != NOT_EXPIRE){
             redisTemplate.expire(key, expire, TimeUnit.SECONDS);
@@ -80,18 +54,10 @@ public class RedisUtils {
     }
 
     public static <T> T get(String key, Class<T> clazz) {
-//        if(!open){
-//            return null;
-//        }
-
         return get(key, clazz, NOT_EXPIRE);
     }
 
     public static String get(String key, long expire) {
-//        if(!open){
-//            return null;
-//        }
-
         String value = (String)valueOperations.get(key);
         if(expire != NOT_EXPIRE){
             redisTemplate.expire(key, expire, TimeUnit.SECONDS);
@@ -100,38 +66,22 @@ public class RedisUtils {
     }
 
     public static String get(String key) {
-//        if(!open){
-//            return null;
-//        }
-
         return get(key, NOT_EXPIRE);
     }
 
     public static void delete(String key) {
-//        if(!open){
-//            return;
-//        }
-
         if(exists(key)){
             redisTemplate.delete(key);
         }
     }
 
     public static void delete(String... keys) {
-//        if(!open){
-//            return;
-//        }
-
         for (String key : keys) {
             redisTemplate.delete(key);
         }
     }
 
     public static void deletePattern(String pattern) {
-//        if(!open){
-//            return;
-//        }
-
         Set<Object> keys = redisTemplate.keys(pattern);
         if (keys.size() > 0) {
             redisTemplate.delete(keys);
@@ -142,10 +92,6 @@ public class RedisUtils {
      * Object转成JSON数据
      */
     private static String toJson(Object object){
-//        if(!open){
-//            return null;
-//        }
-
         if(object instanceof Integer || object instanceof Long || object instanceof Float ||
                 object instanceof Double || object instanceof Boolean || object instanceof String){
             return String.valueOf(object);
@@ -157,10 +103,6 @@ public class RedisUtils {
      * JSON数据，转成Object
      */
     private static <T> T fromJson(String json, Class<T> clazz){
-//        if(!open){
-//            return null;
-//        }
-
         return gson.fromJson(json, clazz);
     }
 

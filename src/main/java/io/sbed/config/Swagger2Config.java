@@ -34,7 +34,6 @@ public class Swagger2Config {
                 .title("sbed的前端api文档")
                 .description("更多资讯请点击 http://.top")
                 .termsOfServiceUrl("http://.top")
-                .contact("靓仔梁")
                 .version("1.0")
                 .build();
     }

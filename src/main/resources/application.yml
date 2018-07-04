@@ -40,7 +40,6 @@ spring:
     resources:
         static-locations: classpath:/static/,classpath:/views/
     redis:
-#        open: true  # 是否开启redis缓存  true开启   false关闭
         database: 0
         host: localhost
 #        host: 192.168.99.100

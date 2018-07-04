@@ -16,7 +16,7 @@ public class JWTToken implements AuthenticationToken {
     private String username;
     private String password;
     private String token;
-    private boolean isLoginRequest;
+    private boolean isLoginRequest = true;
 
 
     public JWTToken(String username,String password,String token){
@@ -66,5 +66,13 @@ public class JWTToken implements AuthenticationToken {
 
     public void setLoginRequest(boolean loginRequest) {
         isLoginRequest = loginRequest;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
     }
 }

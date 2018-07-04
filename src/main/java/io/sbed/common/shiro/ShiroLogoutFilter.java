@@ -2,8 +2,6 @@ package io.sbed.common.shiro;
 
 import com.google.gson.Gson;
 import io.sbed.common.Constant;
-import io.sbed.common.cache.RedisUtils;
-import io.sbed.common.utils.JWTUtil;
 import io.sbed.common.utils.ResponseUtil;
 import io.sbed.common.utils.Result;
 import org.apache.commons.logging.Log;
@@ -40,9 +38,9 @@ public class ShiroLogoutFilter extends LogoutFilter {
             // redis中删除token信息
             HttpServletRequest httpServletRequest = (HttpServletRequest) request;
             String token = httpServletRequest.getHeader(Constant.TOKEN_IN_HEADER);
-            RedisUtils.delete(Constant.prefix.SYSUSER_USERNAME + JWTUtil.getUsername(token));
+//            RedisUtils.delete(Constant.prefix.SYSUSER_USERNAME + JWTUtil.getUsername(token));
             HttpServletResponse httpResponse = (HttpServletResponse) response;
-            ResponseUtil.write((HttpServletResponse) response, gson.toJson(Result.ok()));
+            ResponseUtil.writeJSON((HttpServletResponse) response, gson.toJson(Result.ok()));
         } catch (SessionException ise) {
             log.debug("Encountered session exception during logout.  This can generally safely be ignored.", ise);
         }
