@@ -187,7 +187,7 @@ public class ShiroRealm extends AuthorizingRealm {
                         throw new JWTVerificationException("token校验失败");
                     }
                 }
-                cache.put(usernameInToken,new SimpleAuthenticationInfo(sysUserActive, sysUserActive.getSysUser().getPassword(), getName()));
+                cache.put(usernameInToken,new SimpleAuthenticationInfo(sysUserActive.setLastActiveTimeAndReturn(System.currentTimeMillis()), sysUserActive.getSysUser().getPassword(), getName()));
                 return token.getPrincipal();
             }
         }catch (Exception ex){
