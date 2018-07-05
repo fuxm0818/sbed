@@ -1,5 +1,6 @@
 package io.sbed.modules.sys.controller;
 
+import com.auth0.jwt.exceptions.InvalidClaimException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.google.code.kaptcha.Producer;
 import io.sbed.common.Constant;
@@ -65,29 +66,30 @@ public class SysLoginController extends AbstractController {
     /**
      * 获取登录错误次数
      */
-    @RequestMapping(value = "/sys/getLoginErrorTimes", method = RequestMethod.GET)
-    public Result getLoginErrorTimes(String captchaT) {
-        int errorTimes = NumberUtils.toInt(RedisUtils.get(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT), 0);
+    @RequestMapping(value = "/sys/getLoginLoginErrorTimes", method = RequestMethod.GET)
+    public Result getLoginLoginErrorTimes(String captchaT) {
+        int loginErrorTimes = NumberUtils.toInt(RedisUtils.get(Constant.prefix.LOGIN_ERROR_TIMES + captchaT), 0);
         //redis中获取登录错误次数
-        return Result.ok().put("errorTimes", errorTimes);
+        return Result.ok().put("loginErrorTimes", loginErrorTimes);
     }
 
 
     @RequestMapping(value = "/sys/login")
-    public Result login(HttpServletRequest request, String captchaT) throws Exception {
+    public Result login(HttpServletRequest request, String captchaT,int loginErrorTimes) throws Exception {
         Map<String, Object> result = new HashMap<>();
         //shiro在认证通过后出现错误后将异常类路径通过request返回
         //如果登陆失败从request中获取认证异常信息，shiroLoginFailure就是shiro异常类的全限定名
         String exceptionClassName = (String) request.getAttribute("shiroLoginFailure");
         if (StringUtils.isNotBlank(exceptionClassName)) {
             if (StringUtils.isNotBlank(captchaT)) {
-                long errorTimes = NumberUtils.toInt(RedisUtils.get(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT), 0);
-                RedisUtils.set(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT, ++errorTimes, Constant.Time.Second.hour_1);
+                RedisUtils.set(Constant.prefix.LOGIN_ERROR_TIMES + captchaT, ++loginErrorTimes, Constant.Time.Second.MINUTE_5);
             }
             if (AuthenticationException.class.getName().equals(exceptionClassName)) {
                 throw new AuthenticationException();
             } else if (UnknownAccountException.class.getName().equals(exceptionClassName)) {
                 throw new UnknownAccountException();
+            } else if (InvalidClaimException.class.getName().equals(exceptionClassName)) {
+                throw new InvalidClaimException("token无效");
             } else if (IncorrectCredentialsException.class.getName().equals(exceptionClassName)) {
                 throw new IncorrectCredentialsException();
             } else if (LockedAccountException.class.getName().equals(exceptionClassName)) {
@@ -106,6 +108,10 @@ public class SysLoginController extends AbstractController {
                 throw new Exception(); //最终在设置的异常处理器中生成未知错误
             }
         }
+
+        //登录成功
+        //删除登录错误次数
+        RedisUtils.delete(Constant.prefix.LOGIN_ERROR_TIMES + captchaT);
 
         //获取token放入result中
         SysUserActive sysUserActive = (SysUserActive) SecurityUtils.getSubject().getPrincipals().getPrimaryPrincipal();

@@ -99,7 +99,7 @@ public class ShiroConfig {
         filterMap.put("/v2/**", "anon");//swagger
         filterMap.put("/webjars/**", "anon");//swagger
         filterMap.put("/**/druid/**", "anon");
-        filterMap.put("/sys/getLoginErrorTimes", "anon");
+        filterMap.put("/sys/getLoginLoginErrorTimes", "anon");
         filterMap.put("/**/*.css", "anon");
         filterMap.put("/**/*.js", "anon");
         filterMap.put("/**/*.html", "anon");

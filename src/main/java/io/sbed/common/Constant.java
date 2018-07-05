@@ -148,8 +148,8 @@ public class Constant {
     public class prefix {
         public static final String SYSUSER_USERNAME = "sysuser-username-";
         public static final String CAPTCHA_TEXT = "captcha-text-";
-        public static final String CAPTCHA_ERROR_TIMES = "captcha-errorTimes-";
-        public static final String SHIRO_CACHE_KEY = "shiro-";
+        public static final String LOGIN_ERROR_TIMES = "login-error-times-";
+        public static final String SHIRO_CACHE_KEY = "shiro-cache:";
     }
 
 }

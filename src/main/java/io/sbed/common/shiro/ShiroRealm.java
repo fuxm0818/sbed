@@ -1,5 +1,6 @@
 package io.sbed.common.shiro;
 
+import com.auth0.jwt.exceptions.InvalidClaimException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import io.sbed.common.Constant;
 import io.sbed.common.utils.JWTUtil;
@@ -175,52 +176,45 @@ public class ShiroRealm extends AuthorizingRealm {
 
     @Override
     protected Object getAuthenticationCacheKey(AuthenticationToken token) {
-        try {
-            if (null == token) {
-                return null;
-            }
-            JWTToken jwtToken = (JWTToken) token;
-            if (jwtToken.isLoginRequest() && StringUtils.isNotBlank(jwtToken.getUsername())) {
-                Cache<Object, AuthenticationInfo> cache = getAuthenticationCache();
-                SimpleAuthenticationInfo info = (SimpleAuthenticationInfo) cache.get(jwtToken.getUsername());
-                if (null != info) {
-                    SysUserActive sysUserActive = (SysUserActive) info.getPrincipals().getPrimaryPrincipal();
-                    if (null != sysUserActive) {
-                        cache.remove(jwtToken.getUsername());
-                    }
-                }
-                //登录，直接返回用户名
-                return token.getPrincipal();
-            } else {
-                //非登录，判断token有效性
-                String tokenInHeader = ((JWTToken) token).getToken();
-                String usernameInToken = JWTUtil.getUsername(jwtToken.getToken());
-                Cache<Object, AuthenticationInfo> cache = getAuthenticationCache();
-                SimpleAuthenticationInfo info = (SimpleAuthenticationInfo) cache.get(usernameInToken);
-                if (null != info) {
-                    SysUserActive sysUserActive = (SysUserActive) info.getPrincipals().getPrimaryPrincipal();
-                    if (null == sysUserActive || StringUtils.isBlank(sysUserActive.getToken()) || !tokenInHeader.equalsIgnoreCase(sysUserActive.getToken())) {
-                        log.error("token不存在，无效异常");
-                        throw new AuthenticationException();
-                    } else {
-                        //token超时
-//                        if (System.currentTimeMillis() > sysUserActive.getLastActiveTime() + Constant.Time.Millisecond.MINUTE_30) {
-//                            RedisUtils.delete(Constant.prefix.SYSUSER_USERNAME + usernameInToken);
-//                            log.error("token超时失效,凭证过期");
-//                            throw new ExpiredCredentialsException();
-//                        }
-                        if (!JWTUtil.verify(tokenInHeader, sysUserActive.getSysUser().getUsername(), sysUserActive.getSysUser().getSalt())) {
-                            log.error("token校验失败");
-                            throw new JWTVerificationException("token校验失败");
-                        }
-                    }
-//                    cache.put(usernameInToken, new SimpleAuthenticationInfo(sysUserActive.setLastActiveTimeAndReturn(System.currentTimeMillis()), sysUserActive.getSysUser().getPassword(), getName()));
-                }
-                return token.getPrincipal();
-            }
-        } catch (Exception ex) {
-            log.error(ex.getMessage(), ex);
+        if (null == token) {
             return null;
+        }
+        JWTToken jwtToken = (JWTToken) token;
+        if (jwtToken.isLoginRequest() && StringUtils.isNotBlank(jwtToken.getUsername())) {
+            Cache<Object, AuthenticationInfo> cache = getAuthenticationCache();
+            SimpleAuthenticationInfo info = (SimpleAuthenticationInfo) cache.get(jwtToken.getUsername());
+            if (null != info) {
+                SysUserActive sysUserActive = (SysUserActive) info.getPrincipals().getPrimaryPrincipal();
+                if (null != sysUserActive) {
+                    cache.remove(jwtToken.getUsername());
+                }
+            }
+            //登录，直接返回用户名
+            return token.getPrincipal();
+        } else {
+            //非登录，判断token有效性
+            String tokenInHeader = ((JWTToken) token).getToken();
+            if (StringUtils.isBlank(tokenInHeader)) {
+                throw new InvalidClaimException("token无效异常，空");
+            }
+            String usernameInToken = JWTUtil.getUsername(jwtToken.getToken());
+            Cache<Object, AuthenticationInfo> cache = getAuthenticationCache();
+            SimpleAuthenticationInfo info = (SimpleAuthenticationInfo) cache.get(usernameInToken);
+            if (null != info) {
+                SysUserActive sysUserActive = (SysUserActive) info.getPrincipals().getPrimaryPrincipal();
+                if (null == sysUserActive || StringUtils.isBlank(sysUserActive.getToken()) || !tokenInHeader.equalsIgnoreCase(sysUserActive.getToken())) {
+                    throw new InvalidClaimException("token无效异常");
+                } else {
+                    // 判断token过期
+                    if (JWTUtil.verifyExpire(tokenInHeader, sysUserActive.getSysUser().getSalt())) {
+                        throw new ExpiredCredentialsException("token过期");
+                    }
+                    if (!JWTUtil.verify(tokenInHeader, sysUserActive.getSysUser().getUsername(), sysUserActive.getSysUser().getSalt())) {
+                        throw new JWTVerificationException("token校验异常");
+                    }
+                }
+            }
+            return token.getPrincipal();
         }
     }
 }

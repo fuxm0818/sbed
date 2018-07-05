@@ -42,7 +42,7 @@
             <input type="password" class="form-control" v-model="password" placeholder="密码" @keyup.enter="login">
             <span class="glyphicon glyphicon-lock form-control-feedback"></span>
         </div>
-        <div v-show="errorTimes>=3">
+        <div v-show="loginErrorTimes>=3">
             <div class="form-group has-feedback">
                 <input type="text" class="form-control" v-model="captcha" placeholder="验证码" @keyup.enter="login">
                 <span class="glyphicon glyphicon-warning-sign form-control-feedback"></span>
@@ -85,7 +85,7 @@
             error: false,
             errorMsg: '',
             src: baseURL + 'captcha.jpg',
-            errorTimes: 0
+            loginErrorTimes: 0
         },
         beforeCreate: function () {
             if (self != top) {
@@ -126,22 +126,22 @@
                         } else {
                             vm.error = true;
                             vm.errorMsg = r.msg;
-                            // vm.errorTimes = r.errorTimes;
+                            // vm.loginErrorTimes = r.loginErrorTimes;
                             vm.refreshCode();
-                            vm.getLoginErrorTimes();
+                            vm.getLoginLoginErrorTimes();
                         }
                     }
                 });
             },
-            getLoginErrorTimes: function () {
-                $.get(baseURL + "sys/getLoginErrorTimes?captchaT=" + this.captchaT, function (r) {
-                    vm.errorTimes = r.errorTimes;
+            getLoginLoginErrorTimes: function () {
+                $.get(baseURL + "sys/getLoginLoginErrorTimes?captchaT=" + this.captchaT, function (r) {
+                    vm.loginErrorTimes = r.loginErrorTimes;
                 });
             }
         },
         created: function () {
             this.src = baseURL + 'captcha.jpg?captchaT=' + this.captchaT,
-            this.getLoginErrorTimes();
+            this.getLoginLoginErrorTimes();
         }
     });
 

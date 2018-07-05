@@ -1,7 +1,6 @@
 package io.sbed.common.cache;
 
 import com.google.gson.Gson;
-import io.sbed.common.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.*;
@@ -44,7 +43,7 @@ public class RedisUtils {
     }
 
     public static void set(String key, Object value) {
-        set(key, value, Constant.Time.Second.day_1);
+        set(key, value, NOT_EXPIRE);
     }
 
     public static <T> T get(String key, Class<T> clazz, long expire) {

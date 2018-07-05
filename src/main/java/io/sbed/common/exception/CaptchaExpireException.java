@@ -8,7 +8,7 @@ import org.apache.shiro.authc.AuthenticationException;
 public class CaptchaExpireException extends AuthenticationException {
 
 
-    private long errorTimes = 0;
+    private long loginErrorTimes = 0;
 
     private String msg;
 
@@ -56,11 +56,11 @@ public class CaptchaExpireException extends AuthenticationException {
         this.code = code;
     }
 
-    public long getErrorTimes() {
-        return errorTimes;
+    public long getLoginErrorTimes() {
+        return loginErrorTimes;
     }
 
-    public void setErrorTimes(long errorTimes) {
-        this.errorTimes = errorTimes;
+    public void setLoginErrorTimes(long loginErrorTimes) {
+        this.loginErrorTimes = loginErrorTimes;
     }
 }

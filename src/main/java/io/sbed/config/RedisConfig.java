@@ -1,12 +1,9 @@
 package io.sbed.config;
 
-import io.sbed.common.Constant;
 import io.sbed.common.serializer.RedisObjectSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.*;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
@@ -71,13 +68,6 @@ public class RedisConfig {
     @Bean
     public ZSetOperations<Object, Object> zSetOperations(RedisTemplate<Object, Object> redisTemplate) {
         return redisTemplate.opsForZSet();
-    }
-
-    @Bean
-    public CacheManager cacheManager(RedisTemplate<Object, Object> redisTemplate) {
-        RedisCacheManager cacheManager = new RedisCacheManager(redisTemplate);
-        cacheManager.setDefaultExpiration(Constant.Time.Second.MINUTE_30);
-        return cacheManager;
     }
 
 }

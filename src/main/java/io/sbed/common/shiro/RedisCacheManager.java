@@ -36,7 +36,7 @@ public class RedisCacheManager implements CacheManager {
 
     public class ShiroCache<K, V> implements Cache<K, V> {
 
-        private static final String REDIS_SHIRO_CACHE = "shiro-cache:";
+        private static final String REDIS_SHIRO_CACHE = Constant.prefix.SHIRO_CACHE_KEY;
         private String cacheKey;
         private RedisTemplate<K, V> redisTemplate;
         private long globExpire = Constant.Time.Millisecond.MINUTE_30;

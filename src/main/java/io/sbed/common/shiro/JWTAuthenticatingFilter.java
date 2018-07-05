@@ -55,24 +55,26 @@ public class JWTAuthenticatingFilter extends AuthenticatingFilter {
             String captchaT = StringUtils.clean(httpServletRequest.getParameter("captchaT"));
             Object _login_errors = 3;
             //redis中获取登录错误次数
-            _login_errors = NumberUtils.toInt(RedisUtils.get(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT), 0);
+            _login_errors = NumberUtils.toInt(RedisUtils.get(Constant.prefix.LOGIN_ERROR_TIMES + captchaT), 0);
             if (_login_errors == null) {
                 _login_errors = 3;
             }
-            long errorTimes = Long.valueOf(_login_errors.toString());
+            long loginErrorTimes = Long.valueOf(_login_errors.toString());
+            //放入请求中，带入SysLoginController.login()
+            request.setAttribute("loginErrorTimes",loginErrorTimes);
+            //获取验证码内容
+            String aptchaInCache = RedisUtils.get(Constant.prefix.CAPTCHA_TEXT + captchaT);
+            //删除缓存中保存的验证码
+            RedisUtils.delete(Constant.prefix.CAPTCHA_TEXT + captchaT);
             //验证码
-            if (errorTimes >= 3) {
-                String aptchaInCache = RedisUtils.get(Constant.prefix.CAPTCHA_TEXT + captchaT);
-                if (StringUtils.isNotBlank(aptchaInCache)) {
-                    RedisUtils.delete(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT);
-                } else {
+            if (loginErrorTimes >= 3) {
+                if (StringUtils.isBlank(aptchaInCache)) {
                     return this.onLoginFailure(null, new CaptchaExpireException(), request, response);
                 }
                 if (!captcha.equalsIgnoreCase(aptchaInCache)) {
                     return this.onLoginFailure(null, new CaptchaErrorException(), request, response);
                 }
             }
-            RedisUtils.delete(Constant.prefix.CAPTCHA_TEXT + captchaT);
             return executeLogin(request, response);
         } else {
             if (!executeLogin(request, response)) {
