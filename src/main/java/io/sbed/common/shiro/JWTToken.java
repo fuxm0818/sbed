@@ -19,13 +19,13 @@ public class JWTToken implements AuthenticationToken {
     private boolean isLoginRequest = true;
 
 
-    public JWTToken(String username,String password,String token){
+    public JWTToken(String username, String password, String token) {
         this.username = username;
         this.password = password;
         this.token = token;
     }
 
-    public JWTToken(String username,String password,String token,boolean isLoginRequest){
+    public JWTToken(String username, String password, String token, boolean isLoginRequest) {
         this.username = username;
         this.password = password;
         this.token = token;

@@ -10,17 +10,17 @@ public class Constant {
     /**
      * 令牌
      */
-    public  static final String TOKEN_IN_HEADER = "token";
+    public static final String TOKEN_IN_HEADER = "token";
 
     /**
      * 超级管理员ID
      */
-	public static final int SUPER_ADMIN = 1;
+    public static final int SUPER_ADMIN = 1;
 
     /**
      * utf-8编码
      */
-	public static final String ENCODING_UTF_8="UTF-8";
+    public static final String ENCODING_UTF_8 = "UTF-8";
 
     /**
      * 菜单类型
@@ -29,7 +29,7 @@ public class Constant {
         /**
          * 目录
          */
-    	CATALOG(0),
+        CATALOG(0),
         /**
          * 菜单
          */
@@ -130,20 +130,22 @@ public class Constant {
         }
     }
 
-    public class Time{
-        public class Second{
+    public class Time {
+        public class Second {
             public static final int MINUTE_1 = 60 * 1;
             public static final int MINUTE_5 = 60 * 5;
+            public static final int MINUTE_30 = 60 * 30;
             public final static int hour_1 = 60 * 60 * 1;
             public final static int day_1 = 60 * 60 * 24;
         }
-        public class Millisecond{
+
+        public class Millisecond {
             public static final int MINUTE_30 = 1000 * 60 * 30;
             public final static int day_1 = 24 * 60 * 60 * 1000;
         }
     }
 
-    public class prefix{
+    public class prefix {
         public static final String SYSUSER_USERNAME = "sysuser-username-";
         public static final String CAPTCHA_TEXT = "captcha-text-";
         public static final String CAPTCHA_ERROR_TIMES = "captcha-errorTimes-";

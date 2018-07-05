@@ -23,95 +23,95 @@ import java.util.Map;
 @RequestMapping("/sys/dept")
 public class SysDeptController extends AbstractController {
 
-	@Autowired
-	private SysDeptService sysDeptService;
-	
-	/**
-	 * 列表
-	 */
-	@RequestMapping("/list")
-	@RequiresPermissions("sys:dept:list")
-	public List<SysDept> list(){
-		Map<String, Object> map = new HashMap<>();
-		List<SysDept> deptList = sysDeptService.queryList(map);
-		return deptList;
-	}
+    @Autowired
+    private SysDeptService sysDeptService;
 
-	/**
-	 * 选择部门(添加、修改菜单)
-	 */
-	@RequestMapping("/select")
-	@RequiresPermissions("sys:dept:select")
-	public Result select(){
-		Map<String, Object> map = new HashMap<>();
-		List<SysDept> deptList = sysDeptService.queryList(map);
+    /**
+     * 列表
+     */
+    @RequestMapping("/list")
+    @RequiresPermissions("sys:dept:list")
+    public List<SysDept> list() {
+        Map<String, Object> map = new HashMap<>();
+        List<SysDept> deptList = sysDeptService.queryList(map);
+        return deptList;
+    }
 
-		//添加一级部门
-		SysDept root = new SysDept();
-		root.setId(0L);
-		root.setName("一级部门");
-		root.setParentId(-1L);
-		root.setOpen(true);
-		deptList.add(root);
+    /**
+     * 选择部门(添加、修改菜单)
+     */
+    @RequestMapping("/select")
+    @RequiresPermissions("sys:dept:select")
+    public Result select() {
+        Map<String, Object> map = new HashMap<>();
+        List<SysDept> deptList = sysDeptService.queryList(map);
 
-		return Result.ok().put("deptList", deptList);
-	}
+        //添加一级部门
+        SysDept root = new SysDept();
+        root.setId(0L);
+        root.setName("一级部门");
+        root.setParentId(-1L);
+        root.setOpen(true);
+        deptList.add(root);
 
-	/**
-	 * 上级部门Id(管理员则为0)
-	 */
-	@RequestMapping("/info")
-	@RequiresPermissions("sys:dept:list")
-	public Result info(){
-		long deptId = 0;
-		return Result.ok().put("deptId", deptId);
-	}
-	
-	/**
-	 * 信息
-	 */
-	@RequestMapping("/info/{deptId}")
-	@RequiresPermissions("sys:dept:info")
-	public Result info(@PathVariable("deptId") Long deptId){
-		SysDept dept = sysDeptService.queryObject(deptId);
-		return Result.ok().put("dept", dept);
-	}
-	
-	/**
-	 * 保存
-	 */
-	@RequestMapping("/save")
-	@RequiresPermissions("sys:dept:save")
-	public Result save(@RequestBody SysDept dept){
-		sysDeptService.save(dept);
-		return Result.ok();
-	}
-	
-	/**
-	 * 修改
-	 */
-	@RequestMapping("/update")
-	@RequiresPermissions("sys:dept:update")
-	public Result update(@RequestBody SysDept dept){
-		sysDeptService.update(dept);
-		return Result.ok();
-	}
-	
-	/**
-	 * 删除
-	 */
-	@RequestMapping("/delete")
-	@RequiresPermissions("sys:dept:delete")
-	public Result delete(long deptId){
-		//判断是否有子部门
-		List<Long> deptList = sysDeptService.queryDetpIdList(deptId);
-		if(deptList.size() > 0){
-			return Result.error("请先删除子部门");
-		}
+        return Result.ok().put("deptList", deptList);
+    }
 
-		sysDeptService.delete(deptId);
+    /**
+     * 上级部门Id(管理员则为0)
+     */
+    @RequestMapping("/info")
+    @RequiresPermissions("sys:dept:list")
+    public Result info() {
+        long deptId = 0;
+        return Result.ok().put("deptId", deptId);
+    }
 
-		return Result.ok();
-	}
-	
+    /**
+     * 信息
+     */
+    @RequestMapping("/info/{deptId}")
+    @RequiresPermissions("sys:dept:info")
+    public Result info(@PathVariable("deptId") Long deptId) {
+        SysDept dept = sysDeptService.queryObject(deptId);
+        return Result.ok().put("dept", dept);
+    }
+
+    /**
+     * 保存
+     */
+    @RequestMapping("/save")
+    @RequiresPermissions("sys:dept:save")
+    public Result save(@RequestBody SysDept dept) {
+        sysDeptService.save(dept);
+        return Result.ok();
+    }
+
+    /**
+     * 修改
+     */
+    @RequestMapping("/update")
+    @RequiresPermissions("sys:dept:update")
+    public Result update(@RequestBody SysDept dept) {
+        sysDeptService.update(dept);
+        return Result.ok();
+    }
+
+    /**
+     * 删除
+     */
+    @RequestMapping("/delete")
+    @RequiresPermissions("sys:dept:delete")
+    public Result delete(long deptId) {
+        //判断是否有子部门
+        List<Long> deptList = sysDeptService.queryDetpIdList(deptId);
+        if (deptList.size() > 0) {
+            return Result.error("请先删除子部门");
+        }
+
+        sysDeptService.delete(deptId);
+
+        return Result.ok();
+    }
+
 }

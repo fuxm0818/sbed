@@ -18,18 +18,18 @@ public class ShiroUtils {
 //		return SecurityUtils.getSubject().getSession();
 //	}
 
-	public static Subject getSubject() {
-		return SecurityUtils.getSubject();
-	}
+    public static Subject getSubject() {
+        return SecurityUtils.getSubject();
+    }
 
-	public static SysUser getUserEntity() {
-		return ((SysUserActive)SecurityUtils.getSubject().getPrincipals().getPrimaryPrincipal()).getSysUser();
-	}
+    public static SysUser getUserEntity() {
+        return ((SysUserActive) SecurityUtils.getSubject().getPrincipals().getPrimaryPrincipal()).getSysUser();
+    }
 
-	public static Long getUserId() {
-		return getUserEntity().getId();
-	}
-	
+    public static Long getUserId() {
+        return getUserEntity().getId();
+    }
+
 //	public static void setSessionAttribute(Object key, Object value) {
 //		getSession().setAttribute(key, value);
 //	}
@@ -38,12 +38,12 @@ public class ShiroUtils {
 //		return getSession().getAttribute(key);
 //	}
 
-	public static boolean isLogin() {
-		return SecurityUtils.getSubject().getPrincipal() != null;
-	}
+    public static boolean isLogin() {
+        return SecurityUtils.getSubject().getPrincipal() != null;
+    }
 
-	public static void logout() {
-		SecurityUtils.getSubject().logout();
-	}
+    public static void logout() {
+        SecurityUtils.getSubject().logout();
+    }
 
 }

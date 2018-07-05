@@ -22,7 +22,7 @@ public class DynamicDataSourceConfig {
 
     @Bean
     @ConfigurationProperties("spring.datasource.druid.first")
-    public DataSource firstDataSource(){
+    public DataSource firstDataSource() {
         return DruidDataSourceBuilder.create().build();
     }
 

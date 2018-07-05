@@ -18,5 +18,5 @@ public interface SysContentTaxonomyDao extends BaseDao<SysContentTaxonomy> {
      * 根据内容ID 类型，获取分类,专题,标签的name列表
      */
     List<String> queryTaxonomyNameList(@Param("contentId") Long contentId, @Param("types") Integer[] types);
-	
+
 }

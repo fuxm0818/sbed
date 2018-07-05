@@ -9,65 +9,65 @@ import java.util.List;
  */
 public class SysTable {
 
-	//表的名称
-	private String tableName;
-	//表的备注
-	private String comments;
-	//表的主键
-	private SysColumn pk;
-	//表的列名(不包含主键)
-	private List<SysColumn> columns;
-	//类名(第一个字母大写)，如：sys_user => SysUser
-	private String className;
-	//类名(第一个字母小写)，如：sys_user => sysUser
-	private String classname;
-	
-	public String getTableName() {
-		return tableName;
-	}
+    //表的名称
+    private String tableName;
+    //表的备注
+    private String comments;
+    //表的主键
+    private SysColumn pk;
+    //表的列名(不包含主键)
+    private List<SysColumn> columns;
+    //类名(第一个字母大写)，如：sys_user => SysUser
+    private String className;
+    //类名(第一个字母小写)，如：sys_user => sysUser
+    private String classname;
 
-	public void setTableName(String tableName) {
-		this.tableName = tableName;
-	}
+    public String getTableName() {
+        return tableName;
+    }
 
-	public String getComments() {
-		return comments;
-	}
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
+    }
 
-	public void setComments(String comments) {
-		this.comments = comments;
-	}
+    public String getComments() {
+        return comments;
+    }
 
-	public SysColumn getPk() {
-		return pk;
-	}
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
 
-	public void setPk(SysColumn pk) {
-		this.pk = pk;
-	}
+    public SysColumn getPk() {
+        return pk;
+    }
 
-	public List<SysColumn> getColumns() {
-		return columns;
-	}
+    public void setPk(SysColumn pk) {
+        this.pk = pk;
+    }
 
-	public void setColumns(List<SysColumn> columns) {
-		this.columns = columns;
-	}
+    public List<SysColumn> getColumns() {
+        return columns;
+    }
 
-	public String getClassName() {
-		return className;
-	}
+    public void setColumns(List<SysColumn> columns) {
+        this.columns = columns;
+    }
 
-	public void setClassName(String className) {
-		this.className = className;
-	}
+    public String getClassName() {
+        return className;
+    }
 
-	public String getClassname() {
-		return classname;
-	}
+    public void setClassName(String className) {
+        this.className = className;
+    }
 
-	public void setClassname(String classname) {
-		this.classname = classname;
-	}
+    public String getClassname() {
+        return classname;
+    }
+
+    public void setClassname(String classname) {
+        this.classname = classname;
+    }
 
 }

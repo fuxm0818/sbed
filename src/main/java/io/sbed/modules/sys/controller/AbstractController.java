@@ -14,29 +14,28 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractController {
 
-	protected Logger logger = LoggerFactory.getLogger(getClass());
-	
-	protected SysUser getUser() {
-		Object object = SecurityUtils.getSubject().getPrincipals().getPrimaryPrincipal();
-		if(object instanceof  SysUserActive){
-			SysUserActive sysUserActive = (SysUserActive)object;
-			return sysUserActive.getSysUser();
-		}
-		return null;
-	}
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 
-	protected SysUser getUser(SysUserService sysUserService) {
-		return sysUserService.queryObject(getUserId());
-	}
+    protected SysUser getUser() {
+        Object object = SecurityUtils.getSubject().getPrincipals().getPrimaryPrincipal();
+        if (object instanceof SysUserActive) {
+            SysUserActive sysUserActive = (SysUserActive) object;
+            return sysUserActive.getSysUser();
+        }
+        return null;
+    }
+
+    protected SysUser getUser(SysUserService sysUserService) {
+        return sysUserService.queryObject(getUserId());
+    }
 
 
+    protected Long getUserId() {
+        return getUser().getId();
+    }
 
-	protected Long getUserId() {
-		return getUser().getId();
-	}
-
-	protected Long getDeptId() {
-		return getUser().getDeptId();
-	}
+    protected Long getDeptId() {
+        return getUser().getDeptId();
+    }
 
 }

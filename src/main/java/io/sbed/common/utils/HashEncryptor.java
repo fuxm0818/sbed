@@ -15,8 +15,8 @@ public class HashEncryptor {
     /*
      * MD5转换成16进制字符串需要的基础数据。
      */
-    private static final String[] hexDigits = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
-            "a", "b", "c", "d", "e", "f" };
+    private static final String[] hexDigits = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+            "a", "b", "c", "d", "e", "f"};
 
     public static final String HASH_ALGORITHM_MD5 = "MD5";
 
@@ -25,12 +25,8 @@ public class HashEncryptor {
     /**
      * 根据指定算法加密。
      *
-     * @param str
-     *            待加密的字符串。
-     *
-     * @param algorithm
-     *            加密算法。
-     *
+     * @param str       待加密的字符串。
+     * @param algorithm 加密算法。
      * @return 加密后的字符串
      */
     public static String encrypt(String str, String algorithm) {

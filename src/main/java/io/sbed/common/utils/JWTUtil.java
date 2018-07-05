@@ -78,7 +78,7 @@ public class JWTUtil {
         }
     }
 
-    public static void main(String[] args){
-        System.out.println(sign("admin","1234567890"));
+    public static void main(String[] args) {
+        System.out.println(sign("admin", "1234567890"));
     }
 }

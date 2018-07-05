@@ -7,5 +7,4 @@ import org.apache.ibatis.annotations.Mapper;
 public interface SysRoleDao extends BaseDao<SysRole> {
 
 
-
 }

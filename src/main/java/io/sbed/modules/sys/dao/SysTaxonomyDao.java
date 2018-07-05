@@ -12,7 +12,7 @@ import java.util.List;
  * @date 2017-8-22 10:21
  */
 @Mapper
-public interface SysTaxonomyDao extends BaseDao<SysTaxonomy>{
+public interface SysTaxonomyDao extends BaseDao<SysTaxonomy> {
 
     List<SysTaxonomy> queryListByParentId(Long parentId);
 

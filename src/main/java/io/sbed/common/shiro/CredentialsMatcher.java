@@ -27,7 +27,7 @@ public class CredentialsMatcher extends SimpleCredentialsMatcher {
             //登录，验证密码是否匹配
             return sysUserActive.getSysUser().getPassword().equals(new Sha256Hash(utoken.getCredentials(), sysUserActive.getSysUser().getSalt()).toHex());
         } else {
-            if(StringUtils.isBlank(utoken.getToken())){
+            if (StringUtils.isBlank(utoken.getToken())) {
                 return false;
             }
             //验证token是否一致

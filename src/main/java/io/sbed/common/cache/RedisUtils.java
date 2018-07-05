@@ -25,7 +25,9 @@ public class RedisUtils {
     private static SetOperations<Object, Object> setOperations;
     private static ZSetOperations<Object, Object> zSetOperations;
 
-    /**  不设置过期时长 */
+    /**
+     * 不设置过期时长
+     */
     public final static long NOT_EXPIRE = -1;
 
     private final static Gson gson = new Gson();
@@ -34,20 +36,20 @@ public class RedisUtils {
         return redisTemplate.hasKey(key);
     }
 
-    public static void set(String key, Object value, long expire){
+    public static void set(String key, Object value, long expire) {
         valueOperations.set(key, toJson(value));
-        if(expire != NOT_EXPIRE){
+        if (expire != NOT_EXPIRE) {
             redisTemplate.expire(key, expire, TimeUnit.SECONDS);
         }
     }
 
-    public static void set(String key, Object value){
+    public static void set(String key, Object value) {
         set(key, value, Constant.Time.Second.day_1);
     }
 
     public static <T> T get(String key, Class<T> clazz, long expire) {
-        String value = (String)valueOperations.get(key);
-        if(expire != NOT_EXPIRE){
+        String value = (String) valueOperations.get(key);
+        if (expire != NOT_EXPIRE) {
             redisTemplate.expire(key, expire, TimeUnit.SECONDS);
         }
         return value == null ? null : fromJson(value, clazz);
@@ -58,8 +60,8 @@ public class RedisUtils {
     }
 
     public static String get(String key, long expire) {
-        String value = (String)valueOperations.get(key);
-        if(expire != NOT_EXPIRE){
+        String value = (String) valueOperations.get(key);
+        if (expire != NOT_EXPIRE) {
             redisTemplate.expire(key, expire, TimeUnit.SECONDS);
         }
         return value;
@@ -70,7 +72,7 @@ public class RedisUtils {
     }
 
     public static void delete(String key) {
-        if(exists(key)){
+        if (exists(key)) {
             redisTemplate.delete(key);
         }
     }
@@ -91,9 +93,9 @@ public class RedisUtils {
     /**
      * Object转成JSON数据
      */
-    private static String toJson(Object object){
-        if(object instanceof Integer || object instanceof Long || object instanceof Float ||
-                object instanceof Double || object instanceof Boolean || object instanceof String){
+    private static String toJson(Object object) {
+        if (object instanceof Integer || object instanceof Long || object instanceof Float ||
+                object instanceof Double || object instanceof Boolean || object instanceof String) {
             return String.valueOf(object);
         }
         return gson.toJson(object);
@@ -102,7 +104,7 @@ public class RedisUtils {
     /**
      * JSON数据，转成Object
      */
-    private static <T> T fromJson(String json, Class<T> clazz){
+    private static <T> T fromJson(String json, Class<T> clazz) {
         return gson.fromJson(json, clazz);
     }
 
@@ -114,26 +116,31 @@ public class RedisUtils {
     public void setRedisTemplate(RedisTemplate<Object, Object> redisTemplate) {
         RedisUtils.redisTemplate = redisTemplate;
     }
+
     @Autowired
     @Qualifier("valueOperations")
     public void setValueOperations(ValueOperations<Object, Object> valueOperations) {
         RedisUtils.valueOperations = valueOperations;
     }
+
     @Autowired
     @Qualifier("hashOperations")
     public void setHashOperations(HashOperations<Object, Object, Object> hashOperations) {
         RedisUtils.hashOperations = hashOperations;
     }
+
     @Autowired
     @Qualifier("listOperations")
     public void setListOperations(ListOperations<Object, Object> listOperations) {
         RedisUtils.listOperations = listOperations;
     }
+
     @Autowired
     @Qualifier("setOperations")
     public void setSetOperations(SetOperations<Object, Object> setOperations) {
         RedisUtils.setOperations = setOperations;
     }
+
     @Autowired
     @Qualifier("zSetOperations")
     public void setzSetOperations(ZSetOperations<Object, Object> zSetOperations) {

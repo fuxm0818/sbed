@@ -2,7 +2,6 @@ package io.sbed.common.shiro;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import io.sbed.common.Constant;
-import io.sbed.common.cache.RedisUtils;
 import io.sbed.common.utils.JWTUtil;
 import io.sbed.modules.sys.entity.SysUser;
 import io.sbed.modules.sys.entity.SysUserActive;
@@ -94,7 +93,7 @@ public class ShiroRealm extends AuthorizingRealm {
         SysUserActive sysUserActive = new SysUserActive();
         sysUserActive.setToken(token);
         //最新活动时间
-        sysUserActive.setLastActiveTime(System.currentTimeMillis());
+//        sysUserActive.setLastActiveTime(System.currentTimeMillis());
         sysUserActive.setUsername(username);
         sysUserActive.setSysUser(user);
 //        RedisUtils.set(Constant.prefix.SYSUSER_USERNAME + user.getUsername(), sysUserActive);
@@ -205,17 +204,17 @@ public class ShiroRealm extends AuthorizingRealm {
                         throw new AuthenticationException();
                     } else {
                         //token超时
-                        if (System.currentTimeMillis() > sysUserActive.getLastActiveTime() + Constant.Time.Millisecond.MINUTE_30) {
-                            RedisUtils.delete(Constant.prefix.SYSUSER_USERNAME + usernameInToken);
-                            log.error("token超时失效,凭证过期");
-                            throw new ExpiredCredentialsException();
-                        }
+//                        if (System.currentTimeMillis() > sysUserActive.getLastActiveTime() + Constant.Time.Millisecond.MINUTE_30) {
+//                            RedisUtils.delete(Constant.prefix.SYSUSER_USERNAME + usernameInToken);
+//                            log.error("token超时失效,凭证过期");
+//                            throw new ExpiredCredentialsException();
+//                        }
                         if (!JWTUtil.verify(tokenInHeader, sysUserActive.getSysUser().getUsername(), sysUserActive.getSysUser().getSalt())) {
                             log.error("token校验失败");
                             throw new JWTVerificationException("token校验失败");
                         }
                     }
-                    cache.put(usernameInToken, new SimpleAuthenticationInfo(sysUserActive.setLastActiveTimeAndReturn(System.currentTimeMillis()), sysUserActive.getSysUser().getPassword(), getName()));
+//                    cache.put(usernameInToken, new SimpleAuthenticationInfo(sysUserActive.setLastActiveTimeAndReturn(System.currentTimeMillis()), sysUserActive.getSysUser().getPassword(), getName()));
                 }
                 return token.getPrincipal();
             }

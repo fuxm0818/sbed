@@ -2,13 +2,11 @@ package io.sbed.config;
 
 import io.sbed.common.utils.FileUtils;
 import io.sbed.common.xss.XssFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.DelegatingFilterProxy;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
@@ -28,9 +26,9 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         //映射上传文件的地址
-        registry.addResourceHandler("/uploadFile/**").addResourceLocations("file:"+FileUtils.getTempPath());
+        registry.addResourceHandler("/uploadFile/**").addResourceLocations("file:" + FileUtils.getTempPath());
         //映射swagger
-        if(swaggerOpen){
+        if (swaggerOpen) {
             registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
             registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
         }

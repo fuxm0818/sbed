@@ -72,13 +72,11 @@ public class EhCacheUtil {
      */
     public static <K, V> Map<K, V> iterator(Cache<K, V> cache) {
         Map<K, V> map = null;
-//        if (cache != null) {
-            map = new HashMap<K, V>();
-            // 循环取出缓存域中的键和值
-            for (Entry<K, V> entry : cache){
-                map.put(entry.getKey(), entry.getValue());
-            }
-//        }
+        map = new HashMap<K, V>();
+        // 循环取出缓存域中的键和值
+        for (Entry<K, V> entry : cache) {
+            map.put(entry.getKey(), entry.getValue());
+        }
         return map;
     }
 
@@ -86,34 +84,34 @@ public class EhCacheUtil {
         return noExpiryCache;
     }
 
-    
+
     public static void put(String cacheName, Object key, Object value) {
         getCache(cacheName).put(key, value);
     }
 
-    
+
     public static <T> T get(String cacheName, Object key) {
         return (T) getCache(cacheName).get(key);
     }
 
-    
+
     public static List<T> getKeys(String cacheName) {
         List list = new LinkedList();
         list.addAll(iterator(getCache(cacheName)).entrySet());
         return list;
     }
 
-    
+
     public static void remove(String cacheName, Object key) {
         getCache(cacheName).remove(key);
     }
 
-    
+
     public static void removeAll(String cacheName) {
         getCache(cacheName).clear();
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         iterator(noExpiryCache);
     }
 }

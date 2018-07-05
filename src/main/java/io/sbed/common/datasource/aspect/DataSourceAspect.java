@@ -17,7 +17,7 @@ import java.lang.reflect.Method;
 
 /**
  * @author
- * @Description: (多数据源切面处理类-注解切换数据源)
+ * @Description: (多数据源切面处理类 - 注解切换数据源)
  * @date 2017-9-26 16:55
  */
 @Aspect
@@ -38,10 +38,10 @@ public class DataSourceAspect implements Ordered {
 
         //转换数据源
         DataSource ds = method.getAnnotation(DataSource.class);
-        if(ds == null){
+        if (ds == null) {
             DynamicDataSource.setDataSource(DataSourceNames.FIRST);
             logger.debug("set datasource is " + DataSourceNames.FIRST);
-        }else {
+        } else {
             DynamicDataSource.setDataSource(ds.name());
             logger.debug("set datasource is " + ds.name());
         }

@@ -1,5 +1,6 @@
 package io.sbed.config;
 
+import io.sbed.common.Constant;
 import io.sbed.common.serializer.RedisObjectSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
@@ -75,7 +76,7 @@ public class RedisConfig {
     @Bean
     public CacheManager cacheManager(RedisTemplate<Object, Object> redisTemplate) {
         RedisCacheManager cacheManager = new RedisCacheManager(redisTemplate);
-        cacheManager.setDefaultExpiration(1800);
+        cacheManager.setDefaultExpiration(Constant.Time.Second.MINUTE_30);
         return cacheManager;
     }
 

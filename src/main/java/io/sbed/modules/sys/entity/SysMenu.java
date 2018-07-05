@@ -11,186 +11,196 @@ import java.util.List;
  * @date 2017-6-23 15:07
  */
 public class SysMenu implements Serializable {
-	
-	/**
-	 * 菜单ID
-	 */
-	private Long id;
 
-	/**
-	 * 父菜单ID，一级菜单为0
-	 */
-	private Long parentId;
-	
-	/**
-	 * 父菜单名称
-	 */
-	private String parentName;
+    /**
+     * 菜单ID
+     */
+    private Long id;
 
-	/**
-	 * 菜单名称
-	 */
-	@NotBlank(message="菜单名称不能为空")
-	private String name;
+    /**
+     * 父菜单ID，一级菜单为0
+     */
+    private Long parentId;
 
-	/**
-	 * 菜单URL
-	 */
-	@NotBlank(message="菜单URL")
-	private String url;
+    /**
+     * 父菜单名称
+     */
+    private String parentName;
 
-	/**
-	 * 授权(多个用逗号分隔，如：user:list,user:create)
-	 */
-	private String perms;
+    /**
+     * 菜单名称
+     */
+    @NotBlank(message = "菜单名称不能为空")
+    private String name;
 
-	/**
-	 * 类型     0：目录   1：菜单   2：按钮
-	 */
-	private Integer type;
+    /**
+     * 菜单URL
+     */
+    @NotBlank(message = "菜单URL")
+    private String url;
 
-	/**
-	 * 菜单图标
-	 */
-	private String icon;
+    /**
+     * 授权(多个用逗号分隔，如：user:list,user:create)
+     */
+    private String perms;
 
-	/**
-	 * 排序
-	 */
-	private Integer orderNum;
-	
-	/**
-	 * ztree属性
-	 */
-	private Boolean open;
-	
-	private List<?> list;
+    /**
+     * 类型     0：目录   1：菜单   2：按钮
+     */
+    private Integer type;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    /**
+     * 菜单图标
+     */
+    private String icon;
 
-	public Long getId() {
-		return id;
-	}
-	
-	/**
-	 * 设置：父菜单ID，一级菜单为0
-	 * @param parentId 父菜单ID，一级菜单为0
-	 */
-	public void setParentId(Long parentId) {
-		this.parentId = parentId;
-	}
+    /**
+     * 排序
+     */
+    private Integer orderNum;
 
-	/**
-	 * 获取：父菜单ID，一级菜单为0
-	 * @return Long
-	 */
-	public Long getParentId() {
-		return parentId;
-	}
-	
-	/**
-	 * 设置：菜单名称
-	 * @param name 菜单名称
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     * ztree属性
+     */
+    private Boolean open;
 
-	/**
-	 * 获取：菜单名称
-	 * @return String
-	 */
-	public String getName() {
-		return name;
-	}
-	
-	/**
-	 * 设置：菜单URL
-	 * @param url 菜单URL
-	 */
-	public void setUrl(String url) {
-		this.url = url;
-	}
+    private List<?> list;
 
-	/**
-	 * 获取：菜单URL
-	 * @return String
-	 */
-	public String getUrl() {
-		return url;
-	}
-	
-	public String getPerms() {
-		return perms;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setPerms(String perms) {
-		this.perms = perms;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public Integer getType() {
-		return type;
-	}
+    /**
+     * 设置：父菜单ID，一级菜单为0
+     *
+     * @param parentId 父菜单ID，一级菜单为0
+     */
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
+    }
 
-	public void setType(Integer type) {
-		this.type = type;
-	}
+    /**
+     * 获取：父菜单ID，一级菜单为0
+     *
+     * @return Long
+     */
+    public Long getParentId() {
+        return parentId;
+    }
 
-	/**
-	 * 设置：菜单图标
-	 * @param icon 菜单图标
-	 */
-	public void setIcon(String icon) {
-		this.icon = icon;
-	}
+    /**
+     * 设置：菜单名称
+     *
+     * @param name 菜单名称
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	/**
-	 * 获取：菜单图标
-	 * @return String
-	 */
-	public String getIcon() {
-		return icon;
-	}
-	
-	/**
-	 * 设置：排序
-	 * @param orderNum 排序
-	 */
-	public void setOrderNum(Integer orderNum) {
-		this.orderNum = orderNum;
-	}
+    /**
+     * 获取：菜单名称
+     *
+     * @return String
+     */
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * 获取：排序
-	 * @return Integer
-	 */
-	public Integer getOrderNum() {
-		return orderNum;
-	}
+    /**
+     * 设置：菜单URL
+     *
+     * @param url 菜单URL
+     */
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
-	public List<?> getList() {
-		return list;
-	}
+    /**
+     * 获取：菜单URL
+     *
+     * @return String
+     */
+    public String getUrl() {
+        return url;
+    }
 
-	public void setList(List<?> list) {
-		this.list = list;
-	}
+    public String getPerms() {
+        return perms;
+    }
 
-	public String getParentName() {
-		return parentName;
-	}
+    public void setPerms(String perms) {
+        this.perms = perms;
+    }
 
-	public void setParentName(String parentName) {
-		this.parentName = parentName;
-	}
+    public Integer getType() {
+        return type;
+    }
 
-	public Boolean getOpen() {
-		return open;
-	}
+    public void setType(Integer type) {
+        this.type = type;
+    }
 
-	public void setOpen(Boolean open) {
-		this.open = open;
-	}
+    /**
+     * 设置：菜单图标
+     *
+     * @param icon 菜单图标
+     */
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
+    /**
+     * 获取：菜单图标
+     *
+     * @return String
+     */
+    public String getIcon() {
+        return icon;
+    }
+
+    /**
+     * 设置：排序
+     *
+     * @param orderNum 排序
+     */
+    public void setOrderNum(Integer orderNum) {
+        this.orderNum = orderNum;
+    }
+
+    /**
+     * 获取：排序
+     *
+     * @return Integer
+     */
+    public Integer getOrderNum() {
+        return orderNum;
+    }
+
+    public List<?> getList() {
+        return list;
+    }
+
+    public void setList(List<?> list) {
+        this.list = list;
+    }
+
+    public String getParentName() {
+        return parentName;
+    }
+
+    public void setParentName(String parentName) {
+        this.parentName = parentName;
+    }
+
+    public Boolean getOpen() {
+        return open;
+    }
+
+    public void setOpen(Boolean open) {
+        this.open = open;
+    }
 }

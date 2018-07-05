@@ -7,7 +7,7 @@ package io.sbed.modules.sys.entity;
  */
 public class SysColumn {
 
-	//列名
+    //列名
     private String columnName;
     //列名类型
     private String dataType;
@@ -21,61 +21,61 @@ public class SysColumn {
     private String attrType;
     //auto_increment
     private String extra;
-    
-	public String getColumnName() {
-		return columnName;
-	}
 
-	public void setColumnName(String columnName) {
-		this.columnName = columnName;
-	}
+    public String getColumnName() {
+        return columnName;
+    }
 
-	public String getDataType() {
-		return dataType;
-	}
+    public void setColumnName(String columnName) {
+        this.columnName = columnName;
+    }
 
-	public void setDataType(String dataType) {
-		this.dataType = dataType;
-	}
+    public String getDataType() {
+        return dataType;
+    }
 
-	public String getComments() {
-		return comments;
-	}
+    public void setDataType(String dataType) {
+        this.dataType = dataType;
+    }
 
-	public void setComments(String comments) {
-		this.comments = comments;
-	}
+    public String getComments() {
+        return comments;
+    }
 
-	public String getAttrname() {
-		return attrname;
-	}
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
 
-	public void setAttrname(String attrname) {
-		this.attrname = attrname;
-	}
+    public String getAttrname() {
+        return attrname;
+    }
 
-	public String getAttrName() {
-		return attrName;
-	}
+    public void setAttrname(String attrname) {
+        this.attrname = attrname;
+    }
 
-	public void setAttrName(String attrName) {
-		this.attrName = attrName;
-	}
+    public String getAttrName() {
+        return attrName;
+    }
 
-	public String getAttrType() {
-		return attrType;
-	}
+    public void setAttrName(String attrName) {
+        this.attrName = attrName;
+    }
 
-	public void setAttrType(String attrType) {
-		this.attrType = attrType;
-	}
+    public String getAttrType() {
+        return attrType;
+    }
 
-	public String getExtra() {
-		return extra;
-	}
+    public void setAttrType(String attrType) {
+        this.attrType = attrType;
+    }
 
-	public void setExtra(String extra) {
-		this.extra = extra;
-	}
+    public String getExtra() {
+        return extra;
+    }
+
+    public void setExtra(String extra) {
+        this.extra = extra;
+    }
 
 }

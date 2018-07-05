@@ -11,31 +11,31 @@ import java.io.IOException;
  */
 public class XssFilter implements Filter {
 
-	// 排除的url
-	private String exclude;
+    // 排除的url
+    private String exclude;
 
-	public XssFilter(String exclude) {
-		this.exclude = exclude;
-	}
+    public XssFilter(String exclude) {
+        this.exclude = exclude;
+    }
 
-	@Override
-	public void init(FilterConfig config) throws ServletException {
-	}
+    @Override
+    public void init(FilterConfig config) throws ServletException {
+    }
 
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-		HttpServletRequest httpRequest = (HttpServletRequest) request;
-		String uri=httpRequest.getRequestURI();
-		if(uri.indexOf(".") == -1 && !uri.contains(exclude)){
-			XssHttpServletRequestWrapper xssRequest = new XssHttpServletRequestWrapper((HttpServletRequest) request);
-			chain.doFilter(xssRequest, response);
-		}else{
-			chain.doFilter(request, response);
-		}
-	}
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        String uri = httpRequest.getRequestURI();
+        if (uri.indexOf(".") == -1 && !uri.contains(exclude)) {
+            XssHttpServletRequestWrapper xssRequest = new XssHttpServletRequestWrapper((HttpServletRequest) request);
+            chain.doFilter(xssRequest, response);
+        } else {
+            chain.doFilter(request, response);
+        }
+    }
 
-	@Override
-	public void destroy() {
-	}
+    @Override
+    public void destroy() {
+    }
 
 }

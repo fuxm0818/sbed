@@ -7,44 +7,44 @@ package io.sbed.modules.sys.entity;
  */
 public class SysConfig {
 
-	private Long id;
+    private Long id;
 
-	private String key;
+    private String key;
 
-	private String value;
+    private String value;
 
-	private String remark;
-	
-	public Long getId() {
-		return id;
-	}
+    private String remark;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public String getKey() {
-		return key;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setKey(String key) {
-		this.key = key;
-	}
+    public String getKey() {
+        return key;
+    }
 
-	public String getValue() {
-		return value;
-	}
+    public void setKey(String key) {
+        this.key = key;
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	public String getRemark() {
-		return remark;
-	}
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
 
 }

@@ -19,121 +19,121 @@ import java.util.*;
 @Service("sysUserService")
 public class SysUserServiceImpl implements SysUserService {
 
-	@Autowired
-	private SysUserDao sysUserDao;
+    @Autowired
+    private SysUserDao sysUserDao;
 
-	@Autowired
-	private SysUserRoleService sysUserRoleService;
+    @Autowired
+    private SysUserRoleService sysUserRoleService;
 
-	@Autowired
-	private SysRoleService sysRoleService;
+    @Autowired
+    private SysRoleService sysRoleService;
 
-	@Autowired
-	private SysMenuDao sysMenuDao;
+    @Autowired
+    private SysMenuDao sysMenuDao;
 
-	@Override
-	public List<String> queryAllPerms(Long userId) {
-		return sysUserDao.queryAllPerms(userId);
-	}
+    @Override
+    public List<String> queryAllPerms(Long userId) {
+        return sysUserDao.queryAllPerms(userId);
+    }
 
-	@Override
-	public List<Long> queryAllMenuId(Long userId) {
-		return sysUserDao.queryAllMenuId(userId);
-	}
+    @Override
+    public List<Long> queryAllMenuId(Long userId) {
+        return sysUserDao.queryAllMenuId(userId);
+    }
 
-	@Override
-	public SysUser queryByUserName(String username) {
-		SysUser sysUser=sysUserDao.queryByUserName(username);
-		return sysUser;
-	}
+    @Override
+    public SysUser queryByUserName(String username) {
+        SysUser sysUser = sysUserDao.queryByUserName(username);
+        return sysUser;
+    }
 
-	@Override
-	public SysUser queryObject(Long id) {
-		SysUser sysUser=sysUserDao.queryObject(id);
-		return sysUser;
-	}
+    @Override
+    public SysUser queryObject(Long id) {
+        SysUser sysUser = sysUserDao.queryObject(id);
+        return sysUser;
+    }
 
-	@Override
-	public List<SysUser> queryList(Map<String, Object> map){
-		return sysUserDao.queryList(map);
-	}
-	
-	@Override
-	public int queryTotal(Map<String, Object> map) {
-		return sysUserDao.queryTotal(map);
-	}
+    @Override
+    public List<SysUser> queryList(Map<String, Object> map) {
+        return sysUserDao.queryList(map);
+    }
 
-	@Override
-	@Transactional
-	public void save(SysUser user) {
-		user.setCreateTime(new Date());
-		//sha256加密
-		user.setPassword(new Sha256Hash(user.getPassword(), user.getSalt()).toHex());
-		sysUserDao.save(user);
+    @Override
+    public int queryTotal(Map<String, Object> map) {
+        return sysUserDao.queryTotal(map);
+    }
 
-		//保存用户与角色关系
-		sysUserRoleService.saveOrUpdate(user.getId(), user.getRoleIdList());
+    @Override
+    @Transactional
+    public void save(SysUser user) {
+        user.setCreateTime(new Date());
+        //sha256加密
+        user.setPassword(new Sha256Hash(user.getPassword(), user.getSalt()).toHex());
+        sysUserDao.save(user);
 
-	}
+        //保存用户与角色关系
+        sysUserRoleService.saveOrUpdate(user.getId(), user.getRoleIdList());
 
-	@Override
-	@Transactional
-	public void update(SysUser user) {
+    }
 
-		if(StringUtils.isBlank(user.getPassword())){
-			user.setPassword(null);
-		}else{
-			user.setPassword(new Sha256Hash(user.getPassword(), user.getSalt()).toHex());
-		}
-		sysUserDao.update(user);
-		
-		//保存用户与角色关系
-		sysUserRoleService.saveOrUpdate(user.getId(), user.getRoleIdList());
-	}
+    @Override
+    @Transactional
+    public void update(SysUser user) {
 
-	@Override
-	@Transactional
-	public void deleteBatch(Long[] ids) {
-		sysUserDao.deleteBatch(ids);
+        if (StringUtils.isBlank(user.getPassword())) {
+            user.setPassword(null);
+        } else {
+            user.setPassword(new Sha256Hash(user.getPassword(), user.getSalt()).toHex());
+        }
+        sysUserDao.update(user);
 
-		//删除用户与角色关系
-		sysUserRoleService.deleteBatch(ids);
-	}
+        //保存用户与角色关系
+        sysUserRoleService.saveOrUpdate(user.getId(), user.getRoleIdList());
+    }
 
-	@Override
-	@Transactional
-	public int updatePassword(SysUser user, String password, String newPassword) {
+    @Override
+    @Transactional
+    public void deleteBatch(Long[] ids) {
+        sysUserDao.deleteBatch(ids);
 
-		Map<String, Object> map = new HashMap<>();
-		map.put("id", user.getId());
-		map.put("password", password);
-		map.put("newPassword", newPassword);
-		return sysUserDao.updatePassword(map);
-	}
+        //删除用户与角色关系
+        sysUserRoleService.deleteBatch(ids);
+    }
 
-	@Override
-	public Set<String> getUserPermissions(long userId) {
-		List<String> permsList;
+    @Override
+    @Transactional
+    public int updatePassword(SysUser user, String password, String newPassword) {
 
-		//系统管理员，拥有最高权限
-		if(userId == Constant.SUPER_ADMIN){
-			List<SysMenu> menuList = sysMenuDao.queryList(new HashMap<>());
-			permsList = new ArrayList<>(menuList.size());
-			for(SysMenu menu : menuList){
-				permsList.add(menu.getPerms());
-			}
-		}else{
-			permsList = sysUserDao.queryAllPerms(userId);
-		}
-		//用户权限列表
-		Set<String> permsSet = new HashSet<>();
-		for(String perms : permsList){
-			if(StringUtils.isBlank(perms)){
-				continue;
-			}
-			permsSet.addAll(Arrays.asList(perms.trim().split(",")));
-		}
-		return permsSet;
-	}
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", user.getId());
+        map.put("password", password);
+        map.put("newPassword", newPassword);
+        return sysUserDao.updatePassword(map);
+    }
+
+    @Override
+    public Set<String> getUserPermissions(long userId) {
+        List<String> permsList;
+
+        //系统管理员，拥有最高权限
+        if (userId == Constant.SUPER_ADMIN) {
+            List<SysMenu> menuList = sysMenuDao.queryList(new HashMap<>());
+            permsList = new ArrayList<>(menuList.size());
+            for (SysMenu menu : menuList) {
+                permsList.add(menu.getPerms());
+            }
+        } else {
+            permsList = sysUserDao.queryAllPerms(userId);
+        }
+        //用户权限列表
+        Set<String> permsSet = new HashSet<>();
+        for (String perms : permsList) {
+            if (StringUtils.isBlank(perms)) {
+                continue;
+            }
+            permsSet.addAll(Arrays.asList(perms.trim().split(",")));
+        }
+        return permsSet;
+    }
 
 }

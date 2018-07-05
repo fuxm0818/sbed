@@ -17,7 +17,7 @@ import java.util.Map;
  * @date 2017-8-22 10:25
  */
 @Service("sysTaxonomyService")
-public class SysTaxonomyServiceImpl implements SysTaxonomyService{
+public class SysTaxonomyServiceImpl implements SysTaxonomyService {
 
     @Autowired
     private SysTaxonomyDao sysTaxonomyDao;
@@ -53,13 +53,13 @@ public class SysTaxonomyServiceImpl implements SysTaxonomyService{
     @Override
     @Transactional
     public void delete(Long id) {
-        SysTaxonomy taxonomy=queryObject(id);
+        SysTaxonomy taxonomy = queryObject(id);
         sysTaxonomyDao.delete(id);
     }
 
     @Override
     public SysTaxonomy queryObject(Long id) {
-        SysTaxonomy taxonomy=sysTaxonomyDao.queryObject(id);
+        SysTaxonomy taxonomy = sysTaxonomyDao.queryObject(id);
         return taxonomy;
     }
 
@@ -70,7 +70,7 @@ public class SysTaxonomyServiceImpl implements SysTaxonomyService{
 
     @Override
     public SysTaxonomy queryObjectBySlug(String slug) {
-        SysTaxonomy taxonomy=sysTaxonomyDao.queryObjectBySlug(slug);
+        SysTaxonomy taxonomy = sysTaxonomyDao.queryObjectBySlug(slug);
         return taxonomy;
     }
 

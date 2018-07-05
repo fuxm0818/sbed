@@ -142,7 +142,7 @@ public class ShiroConfig {
      */
     @Bean(name = "shiroRealm")
     public ShiroRealm shiroRealm(@Qualifier("credentialsMatcher") CredentialsMatcher matcher,
-                                   @Qualifier("redisCacheManager") RedisCacheManager redisCacheManager
+                                 @Qualifier("redisCacheManager") RedisCacheManager redisCacheManager
     ) {
         ShiroRealm shiroRealm = new ShiroRealm();
         shiroRealm.setCredentialsMatcher(matcher);

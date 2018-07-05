@@ -15,23 +15,23 @@ public class SysUserActive implements Serializable {
 
     private static final long serialVersionUID = 7637115479953903208L;
 
-    private long lastActiveTime;
+    //    private long lastActiveTime;
     private String token;
     private String username;
     private SysUser sysUser;
 
-    public long getLastActiveTime() {
-        return lastActiveTime;
-    }
+//    public long getLastActiveTime() {
+//        return lastActiveTime;
+//    }
 
-    public void setLastActiveTime(long lastActiveTime) {
-        this.lastActiveTime = lastActiveTime;
-    }
-
-    public SysUserActive setLastActiveTimeAndReturn(long lastActiveTime) {
-        this.lastActiveTime = lastActiveTime;
-        return this;
-    }
+//    public void setLastActiveTime(long lastActiveTime) {
+//        this.lastActiveTime = lastActiveTime;
+//    }
+//
+//    public SysUserActive setLastActiveTimeAndReturn(long lastActiveTime) {
+//        this.lastActiveTime = lastActiveTime;
+//        return this;
+//    }
 
     public String getToken() {
         return token;

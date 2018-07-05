@@ -186,6 +186,7 @@ public class PPTUtils {
 
     /**
      * 更新ppt的内容
+     *
      * @param templateFilePath 模板文件的路径
      * @return
      * @throws Exception
@@ -195,7 +196,7 @@ public class PPTUtils {
         XMLSlideShow pptx = new XMLSlideShow(new FileInputStream(templateFilePath));
         if (pptx.getSlides() != null && pptx.getSlides().size() > 0) {
             // 遍历每一页
-            for (int i = 0;i < pptx.getSlides().size();i++) {
+            for (int i = 0; i < pptx.getSlides().size(); i++) {
                 for (XSLFShape shape : pptx.getSlides().get(i).getShapes()) {
                     //System.out.println(i+": "+shape);
                     /*if(shape instanceof XSLFTable){
@@ -222,13 +223,13 @@ public class PPTUtils {
                         }*//*
                     }*/
                     if (shape instanceof XSLFTextBox) {
-                        XSLFTextBox textBox= (XSLFTextBox) shape;
+                        XSLFTextBox textBox = (XSLFTextBox) shape;
                         //System.out.println(textBox.getText());
                         if (textBox.getText().contains("{title}")) {
                             textBox.clearText();
                             //textBox.setFillColor(Color.LIGHT_GRAY);
-                            XSLFTextParagraph paragraph=textBox.addNewTextParagraph();
-                            XSLFTextRun run=paragraph.addNewTextRun();
+                            XSLFTextParagraph paragraph = textBox.addNewTextParagraph();
+                            XSLFTextRun run = paragraph.addNewTextRun();
                             run.setText("大街道的名字");
                             run.setBold(true);// 加粗
                             run.setFontSize(14D);
@@ -271,24 +272,24 @@ public class PPTUtils {
                                 }
                             }*/
                             textBox.clearText();
-                            XSLFTextParagraph paragraph=textBox.addNewTextParagraph();
+                            XSLFTextParagraph paragraph = textBox.addNewTextParagraph();
                             //paragraph.setBullet(true);
                             paragraph.setBulletAutoNumber(AutoNumberingScheme.arabicPeriod, 1);
                             paragraph.setIndent(-18.0);
                             paragraph.setLeftMargin(18.0);
                             paragraph.setLineSpacing(150.0);//行距
                             //System.out.println(paragraph.getBulletStyle().getAutoNumberingScheme());
-                            XSLFTextRun run=paragraph.addNewTextRun();
+                            XSLFTextRun run = paragraph.addNewTextRun();
                             run.setText("华尔街是纽约市曼哈顿区南部从百老汇路延伸到东河的一条大街道的名字。在岗实践：做好资源配置，协调项目平稳进行；定期与项目涉及人员沟通，了解员工工作进度和障碍，确保项目高效进行；定期回顾项目推动情况，保证项目高效落地，找到未来提升方向。");
                             run.setFontSize(12D);
                             run.setFontFamily("宋体");
-                            paragraph=textBox.addNewTextParagraph();
+                            paragraph = textBox.addNewTextParagraph();
                             //paragraph.setBullet(true);
                             paragraph.setBulletAutoNumber(AutoNumberingScheme.arabicPeriod, 1);
                             paragraph.setIndent(-18.0);
                             paragraph.setLeftMargin(18.0);
                             paragraph.setLineSpacing(150.0);//行距
-                            run=paragraph.addNewTextRun();
+                            run = paragraph.addNewTextRun();
                             run.setText("“华尔街”一词现已超越这条街道本身，成为附近区域的代称，亦可指对整个美国经济具有影响力的金融市场和金融机构。");
                             run.setFontSize(12D);
                             run.setFontFamily("宋体");
@@ -359,8 +360,9 @@ public class PPTUtils {
 
     /**
      * 更新ppt的图表
+     *
      * @param templateFilePath 模板文件的路径
-     * @param graphDatas 图表数据map，map的key为ppt的页码下标
+     * @param graphDatas       图表数据map，map的key为ppt的页码下标
      * @return
      * @throws Exception
      */
@@ -369,7 +371,7 @@ public class PPTUtils {
         XMLSlideShow pptx = new XMLSlideShow(new FileInputStream(templateFilePath));
         if (pptx.getSlides() != null && pptx.getSlides().size() > 0) {
             // 遍历每一页
-            for (int i = 0;i < pptx.getSlides().size();i++) {
+            for (int i = 0; i < pptx.getSlides().size(); i++) {
                 for (POIXMLDocumentPart part : pptx.getSlides().get(i).getRelations()) {
                     if (part instanceof XSLFChart) {
                         if (graphDatas != null && graphDatas.get(i) != null) {
@@ -384,6 +386,7 @@ public class PPTUtils {
 
     /**
      * 更新ppt的柱状图和线性图的组合图表
+     *
      * @param templateFilePath
      * @param graphDatas
      * @return
@@ -394,7 +397,7 @@ public class PPTUtils {
         XMLSlideShow pptx = new XMLSlideShow(new FileInputStream(templateFilePath));
         if (pptx.getSlides() != null && pptx.getSlides().size() > 0) {
             // 遍历每一页
-            for (int i = 0;i < pptx.getSlides().size();i++) {
+            for (int i = 0; i < pptx.getSlides().size(); i++) {
                 for (POIXMLDocumentPart part : pptx.getSlides().get(i).getRelations()) {
                     if (part instanceof XSLFChart) {
                         if (graphDatas != null && graphDatas.get(i) != null) {
@@ -409,6 +412,7 @@ public class PPTUtils {
 
     /**
      * 更新柱状图和线性图的组合图表数据
+     *
      * @param chart
      * @param graphDatas 柱状图和线性图的graphDataList的map map的下标0为柱状图的graphDataList，1为线性图的
      * @return
@@ -465,17 +469,17 @@ public class PPTUtils {
                         if (row == null) {
                             row = sheet.createRow(0);
                         }
-                        row.createCell(j+1).setCellValue(graphDatas.get(i).get(j).getTitle());
-                        String titleRef = new CellReference(sheet.getSheetName(), 0, j+1, true, true).formatAsString();
+                        row.createCell(j + 1).setCellValue(graphDatas.get(i).get(j).getTitle());
+                        String titleRef = new CellReference(sheet.getSheetName(), 0, j + 1, true, true).formatAsString();
                         tx.getStrRef().setF(titleRef);
 
                         // 获取图表系列的名称
                         CTAxDataSource cat = ser.getCat();
                         // 获取图表系列的值
                         CTNumDataSource val = ser.getVal();
-                        updateGraphContent(sheet, cat, val, graphDatas.get(i).get(j), j+1, false);
+                        updateGraphContent(sheet, cat, val, graphDatas.get(i).get(j), j + 1, false);
                     }
-                } else if (1==i) {
+                } else if (1 == i) {
                     // 线性图
                     CTLineChart tempChart = null;
                     if (plotArea.getLineChartArray().length > 0) {
@@ -513,8 +517,8 @@ public class PPTUtils {
                         if (tempChart.getSerArray().length <= j) {
                             // 新增
                             ser = tempChart.addNewSer();
-                            ser.addNewIdx().setVal(graphDatas.get(0).size()+j);
-                            ser.addNewOrder().setVal(graphDatas.get(0).size()+j);
+                            ser.addNewIdx().setVal(graphDatas.get(0).size() + j);
+                            ser.addNewOrder().setVal(graphDatas.get(0).size() + j);
                             ser.addNewTx().addNewStrRef().addNewStrCache().addNewPt().setIdx(0);
                             ser.addNewCat().addNewStrRef().addNewStrCache().addNewPtCount();
                             ser.addNewVal().addNewNumRef().addNewNumCache().addNewPtCount();
@@ -528,15 +532,15 @@ public class PPTUtils {
                         if (row == null) {
                             row = sheet.createRow(0);
                         }
-                        row.createCell(graphDatas.get(0).size()+j+1).setCellValue(graphDatas.get(i).get(j).getTitle());
-                        String titleRef = new CellReference(sheet.getSheetName(), 0, graphDatas.get(0).size()+j+1, true, true).formatAsString();
+                        row.createCell(graphDatas.get(0).size() + j + 1).setCellValue(graphDatas.get(i).get(j).getTitle());
+                        String titleRef = new CellReference(sheet.getSheetName(), 0, graphDatas.get(0).size() + j + 1, true, true).formatAsString();
                         tx.getStrRef().setF(titleRef);
 
                         // 获取图表系列的名称
                         CTAxDataSource cat = ser.getCat();
                         // 获取图表系列的值
                         CTNumDataSource val = ser.getVal();
-                        updateGraphContent(sheet, cat, val, graphDatas.get(i).get(j), graphDatas.get(0).size()+j+1, false);
+                        updateGraphContent(sheet, cat, val, graphDatas.get(i).get(j), graphDatas.get(0).size() + j + 1, false);
                     }
                 }
             }
@@ -587,8 +591,7 @@ public class PPTUtils {
      * @param chart
      * @return
      */
-    private static String getGraphType(XSLFChart chart)
-    {
+    private static String getGraphType(XSLFChart chart) {
         String graphTye = "noSupport";
         CTPlotArea plot = chart.getCTChart().getPlotArea();
         if (null != plot && plot.getBarChartList().size() > 0) {
@@ -607,6 +610,7 @@ public class PPTUtils {
 
     /**
      * 更新圆饼图数据（饼图只有一个系列）
+     *
      * @param chart
      * @param graphDatas
      * @return
@@ -664,6 +668,7 @@ public class PPTUtils {
 
     /**
      * 更新柱状图数据
+     *
      * @param chart
      * @param graphDatas
      * @return
@@ -706,15 +711,15 @@ public class PPTUtils {
                 if (row == null) {
                     row = sheet.createRow(0);
                 }
-                row.createCell(i+1).setCellValue(graphDatas.get(i).getTitle());
-                String titleRef = new CellReference(sheet.getSheetName(), 0, i+1, true, true).formatAsString();
+                row.createCell(i + 1).setCellValue(graphDatas.get(i).getTitle());
+                String titleRef = new CellReference(sheet.getSheetName(), 0, i + 1, true, true).formatAsString();
                 tx.getStrRef().setF(titleRef);
 
                 // 获取图表系列的名称
                 CTAxDataSource cat = ser.getCat();
                 // 获取图表系列的值
                 CTNumDataSource val = ser.getVal();
-                updateGraphContent(sheet, cat, val, graphDatas.get(i), i+1, false);
+                updateGraphContent(sheet, cat, val, graphDatas.get(i), i + 1, false);
             }
 
             // 更新嵌入的workbook
@@ -742,6 +747,7 @@ public class PPTUtils {
 
     /**
      * 更新线性图数据
+     *
      * @param chart
      * @param graphDatas
      * @return
@@ -784,15 +790,15 @@ public class PPTUtils {
                 if (row == null) {
                     row = sheet.createRow(0);
                 }
-                row.createCell(i+1).setCellValue(graphDatas.get(i).getTitle());
-                String titleRef = new CellReference(sheet.getSheetName(), 0, i+1, true, true).formatAsString();
+                row.createCell(i + 1).setCellValue(graphDatas.get(i).getTitle());
+                String titleRef = new CellReference(sheet.getSheetName(), 0, i + 1, true, true).formatAsString();
                 tx.getStrRef().setF(titleRef);
 
                 // 获取图表系列的名称
                 CTAxDataSource cat = ser.getCat();
                 // 获取图表系列的值
                 CTNumDataSource val = ser.getVal();
-                updateGraphContent(sheet, cat, val, graphDatas.get(i), i+1, false);
+                updateGraphContent(sheet, cat, val, graphDatas.get(i), i + 1, false);
             }
 
             // 更新嵌入的workbook
@@ -820,6 +826,7 @@ public class PPTUtils {
 
     /**
      * 更新面积图数据
+     *
      * @param chart
      * @param graphDatas
      * @return
@@ -862,15 +869,15 @@ public class PPTUtils {
                 if (row == null) {
                     row = sheet.createRow(0);
                 }
-                row.createCell(i+1).setCellValue(graphDatas.get(i).getTitle());
-                String titleRef = new CellReference(sheet.getSheetName(), 0, i+1, true, true).formatAsString();
+                row.createCell(i + 1).setCellValue(graphDatas.get(i).getTitle());
+                String titleRef = new CellReference(sheet.getSheetName(), 0, i + 1, true, true).formatAsString();
                 tx.getStrRef().setF(titleRef);
 
                 // 获取图表系列的名称
                 CTAxDataSource cat = ser.getCat();
                 // 获取图表系列的值
                 CTNumDataSource val = ser.getVal();
-                updateGraphContent(sheet, cat, val, graphDatas.get(i), i+1, true);
+                updateGraphContent(sheet, cat, val, graphDatas.get(i), i + 1, true);
             }
 
             // 更新嵌入的workbook
@@ -883,8 +890,7 @@ public class PPTUtils {
                 result = false;
             } finally {
                 if (wb != null) {
-                    try
-                    {
+                    try {
                         wb.close();
                     } catch (IOException e) {
                         result = false;
@@ -899,6 +905,7 @@ public class PPTUtils {
 
     /**
      * 更新雷达图数据
+     *
      * @param chart
      * @param graphDatas
      * @return
@@ -941,15 +948,15 @@ public class PPTUtils {
                 if (row == null) {
                     row = sheet.createRow(0);
                 }
-                row.createCell(i+1).setCellValue(graphDatas.get(i).getTitle());
-                String titleRef = new CellReference(sheet.getSheetName(), 0, i+1, true, true).formatAsString();
+                row.createCell(i + 1).setCellValue(graphDatas.get(i).getTitle());
+                String titleRef = new CellReference(sheet.getSheetName(), 0, i + 1, true, true).formatAsString();
                 tx.getStrRef().setF(titleRef);
 
                 // 获取图表系列的名称
                 CTAxDataSource cat = ser.getCat();
                 // 获取图表系列的值
                 CTNumDataSource val = ser.getVal();
-                updateGraphContent(sheet, cat, val, graphDatas.get(i), i+1, true);
+                updateGraphContent(sheet, cat, val, graphDatas.get(i), i + 1, true);
             }
 
             // 更新嵌入的workbook
@@ -962,8 +969,7 @@ public class PPTUtils {
                 result = false;
             } finally {
                 if (wb != null) {
-                    try
-                    {
+                    try {
                         wb.close();
                     } catch (IOException e) {
                         result = false;
@@ -978,11 +984,12 @@ public class PPTUtils {
 
     /**
      * 更新图表内容
+     *
      * @param sheet
      * @param cat
      * @param val
      * @param graphData
-     * @param rowNum sheet的列的下标
+     * @param rowNum    sheet的列的下标
      * @param catNumRef cat是否numRef
      */
     private static void updateGraphContent(Sheet sheet, CTAxDataSource cat, CTNumDataSource val, GraphData graphData, int rowNum, boolean catNumRef) {
@@ -1018,12 +1025,12 @@ public class PPTUtils {
                 catStrVal.setV(graphData.getSerList().get(i).getSerName());
             }
 
-            row = sheet.getRow(i+1);
-            if(row == null){
-                row = sheet.createRow(i+1);
+            row = sheet.getRow(i + 1);
+            if (row == null) {
+                row = sheet.createRow(i + 1);
             }
             cell0 = row.getCell(0);
-            if(cell0 == null){
+            if (cell0 == null) {
                 cell0 = row.createCell(0);
             }
             cell0.setCellValue(graphData.getSerList().get(i).getSerName());

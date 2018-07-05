@@ -16,71 +16,71 @@ import java.util.Map;
 @Service("sysConfigService")
 public class SysConfigServiceImpl implements SysConfigService {
 
-	@Autowired
-	private SysConfigDao sysConfigDao;
+    @Autowired
+    private SysConfigDao sysConfigDao;
 
-	@Override
-	@Transactional
-	public void save(SysConfig config) {
-		sysConfigDao.save(config);
-	}
+    @Override
+    @Transactional
+    public void save(SysConfig config) {
+        sysConfigDao.save(config);
+    }
 
-	@Override
-	@Transactional
-	public void update(SysConfig config) {
-		sysConfigDao.update(config);
-	}
+    @Override
+    @Transactional
+    public void update(SysConfig config) {
+        sysConfigDao.update(config);
+    }
 
-	@Override
-	@Transactional
-	public void deleteBatch(Long[] ids) {
-		for(Long id : ids){
-			SysConfig config = queryObject(id);
-		}
+    @Override
+    @Transactional
+    public void deleteBatch(Long[] ids) {
+        for (Long id : ids) {
+            SysConfig config = queryObject(id);
+        }
 
-		sysConfigDao.deleteBatch(ids);
-	}
+        sysConfigDao.deleteBatch(ids);
+    }
 
-	@Override
-	public List<SysConfig> queryList(Map<String, Object> map) {
-		return sysConfigDao.queryList(map);
-	}
+    @Override
+    public List<SysConfig> queryList(Map<String, Object> map) {
+        return sysConfigDao.queryList(map);
+    }
 
-	@Override
-	public int queryTotal(Map<String, Object> map) {
-		return sysConfigDao.queryTotal(map);
-	}
+    @Override
+    public int queryTotal(Map<String, Object> map) {
+        return sysConfigDao.queryTotal(map);
+    }
 
-	@Override
-	public SysConfig queryObject(Long id) {
-		SysConfig config = sysConfigDao.queryObject(id);
-		return config;
-	}
+    @Override
+    public SysConfig queryObject(Long id) {
+        SysConfig config = sysConfigDao.queryObject(id);
+        return config;
+    }
 
-	@Override
-	public String getValue(String key) {
-		SysConfig config = sysConfigDao.queryObjectByKey(key);
-		return config == null ? null : config.getValue();
-	}
-	
-	@Override
-	public <T> T getConfigObject(String key, Class<T> clazz) {
-		String value = getValue(key);
-		if(StringUtils.isNotBlank(value)){
-			return new Gson().fromJson(value, clazz);
-		}
+    @Override
+    public String getValue(String key) {
+        SysConfig config = sysConfigDao.queryObjectByKey(key);
+        return config == null ? null : config.getValue();
+    }
 
-		try {
-			return clazz.newInstance();
-		} catch (Exception e) {
-			throw new SbedException("获取参数失败");
-		}
-	}
+    @Override
+    public <T> T getConfigObject(String key, Class<T> clazz) {
+        String value = getValue(key);
+        if (StringUtils.isNotBlank(value)) {
+            return new Gson().fromJson(value, clazz);
+        }
 
-	@Override
-	public SysConfig queryObjectByKey(String key) {
-		SysConfig config = sysConfigDao.queryObjectByKey(key);
-		return config;
-	}
+        try {
+            return clazz.newInstance();
+        } catch (Exception e) {
+            throw new SbedException("获取参数失败");
+        }
+    }
+
+    @Override
+    public SysConfig queryObjectByKey(String key) {
+        SysConfig config = sysConfigDao.queryObjectByKey(key);
+        return config;
+    }
 
 }

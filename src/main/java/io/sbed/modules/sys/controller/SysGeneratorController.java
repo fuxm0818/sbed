@@ -26,46 +26,46 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping("/sys/generator")
-public class SysGeneratorController extends AbstractController{
+public class SysGeneratorController extends AbstractController {
 
-	@Autowired
-	private SysGeneratorService sysGeneratorService;
-	
-	/**
-	 * 列表
-	 */
-	@ResponseBody
-	@RequestMapping("/list")
-	@RequiresPermissions("sys:generator:list")
-	public Result list(@RequestParam Map<String, Object> params){
-		//查询列表数据
-		Query query = new Query(params);
-		List<Map<String, Object>> list = sysGeneratorService.queryList(query);
-		int total = sysGeneratorService.queryTotal(query);
-		
-		PageUtils pageUtil = new PageUtils(list, total, query.getLimit(), query.getPage());
-		
-		return Result.ok().put("page", pageUtil);
-	}
-	
-	/**
-	 * 生成代码
-	 */
-	@RequestMapping("/code")
-	@RequiresPermissions("sys:generator:code")
-	public void code(HttpServletRequest request, HttpServletResponse response) throws IOException{
-		String[] tableNames = new String[]{};
-		String tables = request.getParameter("tables");
-		tableNames = JSON.parseArray(tables).toArray(tableNames);
-		
-		byte[] data = sysGeneratorService.generatorCode(tableNames);
-		
-		response.reset();  
+    @Autowired
+    private SysGeneratorService sysGeneratorService;
+
+    /**
+     * 列表
+     */
+    @ResponseBody
+    @RequestMapping("/list")
+    @RequiresPermissions("sys:generator:list")
+    public Result list(@RequestParam Map<String, Object> params) {
+        //查询列表数据
+        Query query = new Query(params);
+        List<Map<String, Object>> list = sysGeneratorService.queryList(query);
+        int total = sysGeneratorService.queryTotal(query);
+
+        PageUtils pageUtil = new PageUtils(list, total, query.getLimit(), query.getPage());
+
+        return Result.ok().put("page", pageUtil);
+    }
+
+    /**
+     * 生成代码
+     */
+    @RequestMapping("/code")
+    @RequiresPermissions("sys:generator:code")
+    public void code(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String[] tableNames = new String[]{};
+        String tables = request.getParameter("tables");
+        tableNames = JSON.parseArray(tables).toArray(tableNames);
+
+        byte[] data = sysGeneratorService.generatorCode(tableNames);
+
+        response.reset();
         response.setHeader("Content-Disposition", "attachment; filename=\"sbed-generate-code.zip\"");
-        response.addHeader("Content-Length", "" + data.length);  
-        response.setContentType("application/octet-stream; charset=UTF-8");  
-  
-        IOUtils.write(data, response.getOutputStream());  
-	}
+        response.addHeader("Content-Length", "" + data.length);
+        response.setContentType("application/octet-stream; charset=UTF-8");
+
+        IOUtils.write(data, response.getOutputStream());
+    }
 
 }
