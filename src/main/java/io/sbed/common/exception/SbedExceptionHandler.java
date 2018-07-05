@@ -75,7 +75,7 @@ public class SbedExceptionHandler {
 	@ExceptionHandler(AuthenticationException.class)
 	public Result handleAuthorizationException(AuthenticationException e){
 		logger.error(e.getMessage(), e);
-		return Result.error(HttpStatus.SC_UNAUTHORIZED,"认证失败");
+		return Result.error(HttpStatus.SC_FORBIDDEN,"认证失败");
 	}
 
 	@ExceptionHandler(ExpiredCredentialsException.class)

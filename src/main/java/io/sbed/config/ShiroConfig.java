@@ -1,6 +1,9 @@
 package io.sbed.config;
 
-import io.sbed.common.shiro.*;
+import io.sbed.common.shiro.CredentialsMatcher;
+import io.sbed.common.shiro.JWTAuthenticatingFilter;
+import io.sbed.common.shiro.RedisCacheManager;
+import io.sbed.common.shiro.ShiroRealm;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.mgt.SecurityManager;
@@ -84,7 +87,6 @@ public class ShiroConfig {
         //验证码过滤器
         Map<String, Filter> shiroFilterMap = shiroFilterFactoryBean.getFilters();
         shiroFilterMap.put("authc", new JWTAuthenticatingFilter());
-        shiroFilterMap.put("logout", new ShiroLogoutFilter());
         shiroFilterFactoryBean.setFilters(shiroFilterMap);
 
         //登录
@@ -113,7 +115,6 @@ public class ShiroConfig {
         filterMap.put("/modules/**", "anon");
         filterMap.put("**/*.html", "anon");
         //退出
-        filterMap.put("/sys/logout", "logout");
         // 访问401和404页面不通过我们的Filter
         filterMap.put("/401", "anon");
         filterMap.put("/404", "anon");

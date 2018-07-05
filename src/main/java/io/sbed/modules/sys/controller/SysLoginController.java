@@ -12,8 +12,11 @@ import io.sbed.modules.sys.service.SysUserService;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -36,6 +39,8 @@ import java.util.Map;
  */
 @RestController
 public class SysLoginController extends AbstractController {
+
+    private static final Log log = LogFactory.getLog(SysLoginController.class);
 
     @Autowired
     private Producer producer;
@@ -75,8 +80,10 @@ public class SysLoginController extends AbstractController {
         //如果登陆失败从request中获取认证异常信息，shiroLoginFailure就是shiro异常类的全限定名
         String exceptionClassName = (String) request.getAttribute("shiroLoginFailure");
         if (StringUtils.isNotBlank(exceptionClassName)) {
-            long errorTimes = NumberUtils.toInt(RedisUtils.get(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT), 0);
-            RedisUtils.set(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT, ++errorTimes, Constant.Time.Second.hour_1);
+            if (StringUtils.isNotBlank(captchaT)) {
+                long errorTimes = NumberUtils.toInt(RedisUtils.get(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT), 0);
+                RedisUtils.set(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT, ++errorTimes, Constant.Time.Second.hour_1);
+            }
             if (AuthenticationException.class.getName().equals(exceptionClassName)) {
                 throw new AuthenticationException();
             } else if (UnknownAccountException.class.getName().equals(exceptionClassName)) {
@@ -93,7 +100,7 @@ public class SysLoginController extends AbstractController {
                 throw new CaptchaExpireException();
             } else if (ExpiredCredentialsException.class.getName().equals(exceptionClassName)) {
                 throw new ExpiredCredentialsException();
-            }else if (JWTVerificationException.class.getName().equals(exceptionClassName)) {
+            } else if (JWTVerificationException.class.getName().equals(exceptionClassName)) {
                 throw new JWTVerificationException("token校验无效");
             } else {
                 throw new Exception(); //最终在设置的异常处理器中生成未知错误
@@ -110,4 +117,10 @@ public class SysLoginController extends AbstractController {
         return r;
     }
 
+    @RequestMapping(value = "/sys/logout")
+    public Result login(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Subject subject = SecurityUtils.getSubject();
+        subject.logout();
+        return Result.ok();
+    }
 }

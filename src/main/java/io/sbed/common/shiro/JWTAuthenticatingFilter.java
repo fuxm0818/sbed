@@ -64,15 +64,15 @@ public class JWTAuthenticatingFilter extends AuthenticatingFilter {
             if (errorTimes >= 3) {
                 String aptchaInCache = RedisUtils.get(Constant.prefix.CAPTCHA_TEXT + captchaT);
                 if (StringUtils.isNotBlank(aptchaInCache)) {
-                    RedisUtils.delete(Constant.prefix.CAPTCHA_TEXT + captchaT);
                     RedisUtils.delete(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT);
-                }else{
+                } else {
                     return this.onLoginFailure(null, new CaptchaExpireException(), request, response);
                 }
                 if (!captcha.equalsIgnoreCase(aptchaInCache)) {
                     return this.onLoginFailure(null, new CaptchaErrorException(), request, response);
                 }
             }
+            RedisUtils.delete(Constant.prefix.CAPTCHA_TEXT + captchaT);
             return executeLogin(request, response);
         } else {
             if (!executeLogin(request, response)) {
