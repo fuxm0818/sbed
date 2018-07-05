@@ -134,7 +134,7 @@ public class ShiroRealm extends AuthorizingRealm {
             // 下面的可以使用缓存提升速度
             //用户权限列表
             Set<String> permsSet = sysUserService.getUserPermissions(userId);
-            info.addStringPermissions(permsSet);
+            info.setStringPermissions(permsSet);
             return info;
         } catch (Exception ex) {
             log.error(ex);
