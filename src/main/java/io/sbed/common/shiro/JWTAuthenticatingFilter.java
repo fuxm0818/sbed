@@ -65,6 +65,7 @@ public class JWTAuthenticatingFilter extends AuthenticatingFilter {
                 String aptchaInCache = RedisUtils.get(Constant.prefix.CAPTCHA_TEXT + captchaT);
                 if (StringUtils.isNotBlank(aptchaInCache)) {
                     RedisUtils.delete(Constant.prefix.CAPTCHA_TEXT + captchaT);
+                    RedisUtils.delete(Constant.prefix.CAPTCHA_ERROR_TIMES + captchaT);
                 }else{
                     return this.onLoginFailure(null, new CaptchaExpireException(), request, response);
                 }
