@@ -75,7 +75,8 @@ public class SysLoginController extends AbstractController {
 
 
     @RequestMapping(value = "/sys/login")
-    public Result login(HttpServletRequest request, String captchaT,int loginErrorTimes) throws Exception {
+    public Result login(HttpServletRequest request, String captchaT) throws Exception {
+        Long loginErrorTimes = (Long)request.getAttribute("loginErrorTimes");
         Map<String, Object> result = new HashMap<>();
         //shiro在认证通过后出现错误后将异常类路径通过request返回
         //如果登陆失败从request中获取认证异常信息，shiroLoginFailure就是shiro异常类的全限定名

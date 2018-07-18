@@ -206,7 +206,7 @@ public class ShiroRealm extends AuthorizingRealm {
                     throw new InvalidClaimException("token无效异常");
                 } else {
                     // 判断token过期
-                    if (JWTUtil.verifyExpire(tokenInHeader, sysUserActive.getSysUser().getSalt())) {
+                    if (!JWTUtil.verifyExpire(tokenInHeader, sysUserActive.getSysUser().getSalt())) {
                         throw new ExpiredCredentialsException("token过期");
                     }
                     if (!JWTUtil.verify(tokenInHeader, sysUserActive.getSysUser().getUsername(), sysUserActive.getSysUser().getSalt())) {

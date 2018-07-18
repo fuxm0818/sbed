@@ -32,10 +32,16 @@ public class JWTAuthenticatingFilter extends AuthenticatingFilter {
 
     @Override
     protected AuthenticationToken createToken(ServletRequest request, ServletResponse response) {
-        String username = StringUtils.clean(request.getParameter("username"));
-        String password = StringUtils.clean(request.getParameter("password"));
-        String token = this.getRequestToken((HttpServletRequest) request);
+        String token = "";
+        String username = "";
+        String password = "";
         boolean isLogin = isLoginRequest(request, response);
+        if (isLogin) {
+            username = StringUtils.clean(request.getParameter("username"));
+            password = StringUtils.clean(request.getParameter("password"));
+        } else {
+            token = this.getRequestToken((HttpServletRequest) request);
+        }
 
         JWTToken jwtToken = new JWTToken(username, password, token, isLogin);
         return jwtToken;
@@ -61,7 +67,7 @@ public class JWTAuthenticatingFilter extends AuthenticatingFilter {
             }
             long loginErrorTimes = Long.valueOf(_login_errors.toString());
             //放入请求中，带入SysLoginController.login()
-            request.setAttribute("loginErrorTimes",loginErrorTimes);
+            request.setAttribute("loginErrorTimes", loginErrorTimes);
             //获取验证码内容
             String aptchaInCache = RedisUtils.get(Constant.prefix.CAPTCHA_TEXT + captchaT);
             //删除缓存中保存的验证码

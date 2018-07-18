@@ -6,6 +6,9 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import io.sbed.common.Constant;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
@@ -19,8 +22,10 @@ import java.util.Date;
  */
 public class JWTUtil {
 
+    private static final Log log = LogFactory.getLog(JWTUtil.class);
+
     // 过期时间5分钟
-    private static final long EXPIRE_TIME = 1000*30;
+    private static final long EXPIRE_TIME = Constant.Time.Millisecond.day_1;
 
     /**
      * 校验token是否过期
@@ -88,18 +93,20 @@ public class JWTUtil {
             Date date = new Date(System.currentTimeMillis() + EXPIRE_TIME);
             Algorithm algorithm = Algorithm.HMAC256(secret);
             // 附带username信息
-            return JWT.create()
+            String token = JWT.create()
                     .withClaim("username", username)
                     .withExpiresAt(date)
                     .sign(algorithm);
+            log.debug("###username:"+username+">>>>jwt build token:"+token);
+            return token;
         } catch (UnsupportedEncodingException e) {
             return null;
         }
     }
 
     public static void main(String[] args) {
-        String token = sign("admin", "1234567890");
-//        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MzA3ODE0MDMsInVzZXJuYW1lIjoiYWRtaW4ifQ.iAgEocVGM2_RrcEB1tE3PgssZC0VESABSvFxOvS1bZc";
+//        String token = sign("admin", "1234567890");
+        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MzE5NjI3NzMsInVzZXJuYW1lIjoiYWRtaW4ifQ.48jWMVZNXjChjuLz3Mr-3pVn0EqvPsBV-iyV01gHjb0";
         final int[] i = {0};
         System.out.println(token);
         new Thread(new Runnable() {
